@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 interface Task {
   id: string;
@@ -272,7 +272,13 @@ const DashboardPage = () => {
           <div className="flex flex-col sm:flex-row justify-between items-center py-6 gap-4">
             <div>
               <h1 className="text-4xl font-bold text-indigo-600">
-                📊 Dashboard
+                <Link
+                  to="/anniversary"
+                  className="inline-flex items-center gap-2 hover:underline cursor-pointer"
+                  aria-label="ไปหน้าครบรอบ"
+                >
+                  📊 Dashboard
+                </Link>
               </h1>
               <p className="text-gray-700 mt-1 font-medium">{getGreeting()}</p>
               <p className="text-sm text-gray-500 mt-1">
