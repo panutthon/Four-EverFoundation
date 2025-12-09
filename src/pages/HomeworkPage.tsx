@@ -1,0 +1,944 @@
+import { useState, useEffect, Fragment } from "react";
+import { useNavigate } from "react-router-dom";
+import { Listbox, Transition } from "@headlessui/react";
+import { ChevronUpDownIcon, CheckIcon } from "@heroicons/react/24/outline";
+import { CalendarIcon } from "@heroicons/react/24/solid";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import Swal from "sweetalert2";
+
+interface Task {
+  id: string;
+  title: string;
+  dueDate: string;
+  status: "Pending" | "Done";
+  type: "Homework" | "Plan";
+  subject?: string;
+  priority?: "Low" | "Medium" | "High";
+  description?: string;
+  category?: string;
+  estimatedTime?: string;
+}
+
+const HomeworkPage = () => {
+  const navigate = useNavigate();
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(false);
+  const apiUrl = "https://sheetdb.io/api/v1/rfau3x5t1i01p";
+
+  const [newTask, setNewTask] = useState({
+    title: "",
+    dueDate: "",
+    type: "Homework",
+    subject: "",
+    priority: "Medium",
+    description: "",
+    estimatedTime: "",
+  });
+
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  const subjects = [
+    "คณิตศาสตร์",
+    "วิทยาศาสตร์",
+    "ภาษาไทย",
+    "ภาษาอังกฤษ",
+    "สังคมศึกษา",
+    "ประวัติศาสตร์",
+    "ฟิสิกส์",
+    "เคมี",
+    "ชีววิทยา",
+    "คอมพิวเตอร์",
+    "ศิลปะ",
+    "ดนตรี",
+    "พละศึกษา",
+    "อื่นๆ",
+  ];
+
+  const [formErrors, setFormErrors] = useState<{
+    title?: string;
+    dueDate?: string;
+  }>({});
+
+  useEffect(() => {
+    const isAuth = localStorage.getItem("isAuthenticated");
+    if (!isAuth) {
+      navigate("/");
+      return;
+    }
+    fetchTasks();
+  }, [navigate]);
+
+  const fetchTasks = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(apiUrl);
+      if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+      const data = await res.json();
+      const formattedTasks = data.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        dueDate: item.dueDate,
+        status: item.status,
+        type: item.type,
+        subject: item.subject || "",
+        priority: item.priority || "Medium",
+        description: item.description || "",
+        estimatedTime: item.estimatedTime || "",
+      }));
+      setTasks(formattedTasks);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddTask = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const errors: { title?: string; dueDate?: string } = {};
+    if (!newTask.title || newTask.title.trim() === "") {
+      errors.title = "กรุณากรอกชื่องาน";
+    }
+    if (!newTask.dueDate) {
+      errors.dueDate = "กรุณาเลือกวันครบกำหนด";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    setFormErrors({});
+
+    const task: Task = {
+      id: crypto.randomUUID(),
+      title: newTask.title,
+      dueDate: newTask.dueDate,
+      status: "Pending",
+      type: newTask.type as "Homework" | "Plan",
+      subject: newTask.subject || "ทั่วไป",
+      priority: newTask.priority as "Low" | "Medium" | "High",
+      description: newTask.description,
+      estimatedTime: newTask.estimatedTime,
+    };
+
+    setLoading(true);
+    try {
+      const res = await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: task }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+      setTasks([...tasks, task]);
+      setNewTask({
+        title: "",
+        dueDate: "",
+        type: "Homework",
+        subject: "",
+        priority: "Medium",
+        description: "",
+        estimatedTime: "",
+      });
+      setSelectedDate(null);
+    } catch (error) {
+      console.error("Error adding task:", error);
+      alert("Failed to add task");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    const result = await Swal.fire({
+      title: "คุณแน่ใจหรือไม่?",
+      text: "การกระทำนี้จะลบงานออกจากระบบ ไม่สามารถย้อนกลับได้",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "ใช่, ลบเลย",
+      cancelButtonText: "ยกเลิก",
+      reverseButtons: true,
+    });
+
+    if (!result.isConfirmed) return;
+
+    setLoading(true);
+    try {
+      const res = await fetch(`${apiUrl}/id/${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+      setTasks(tasks.filter((t) => t.id !== id));
+      await Swal.fire({
+        title: "ลบแล้ว",
+        text: "งานถูกลบเรียบร้อย",
+        icon: "success",
+        timer: 1400,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      await Swal.fire({
+        title: "เกิดข้อผิดพลาด",
+        text: "ไม่สามารถลบงานได้ กรุณาลองอีกครั้ง",
+        icon: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("isAuthenticated");
+    navigate("/");
+  };
+
+  const toggleStatus = async (task: Task) => {
+    const newStatus = task.status === "Pending" ? "Done" : "Pending";
+
+    const updatedTasks = tasks.map((t) =>
+      t.id === task.id ? { ...t, status: newStatus } : t
+    );
+    setTasks(updatedTasks as Task[]);
+
+    try {
+      await fetch(`${apiUrl}/id/${encodeURIComponent(task.id)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: { status: newStatus } }),
+      });
+    } catch (error) {
+      console.error("Error updating status:", error);
+      fetchTasks();
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case "High":
+        return "bg-red-100 text-red-700 border-red-300";
+      case "Medium":
+        return "bg-yellow-100 text-yellow-700 border-yellow-300";
+      case "Low":
+        return "bg-green-100 text-green-700 border-green-300";
+      default:
+        return "bg-gray-100 text-gray-700 border-gray-300";
+    }
+  };
+
+  const getPriorityIcon = (priority: string) => {
+    switch (priority) {
+      case "High":
+        return "🔥";
+      case "Medium":
+        return "⚡";
+      case "Low":
+        return "✅";
+      default:
+        return "📌";
+    }
+  };
+
+  const motivationalQuotes = [
+    "เชื่อมั่นในตัวเอง ทำงานให้ดีที่สุด! 💪",
+    "ความสำเร็จเริ่มจากการลงมือทำวันนี้ 🚀",
+    "ทุกความพยายามจะไม่สูญเปล่า ⭐",
+    "เป้าหมายใกล้แล้ว สู้ต่อไป! 🎯",
+    "วันนี้เป็นจุดเริ่มต้นของความสำเร็จ 🌟",
+  ];
+
+  const randomQuote =
+    motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
+
+  const stats = {
+    total: tasks.length,
+    pending: tasks.filter((t) => t.status === "Pending").length,
+    done: tasks.filter((t) => t.status === "Done").length,
+  };
+
+  return (
+    <div className="min-h-screen bg-purple-50">
+      {/* Header */}
+      <div className="bg-white shadow-md border-b-4 border-purple-500">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-purple-600">
+                📝 จัดการการบ้าน
+              </h1>
+              <p className="text-sm text-gray-600 mt-1">{randomQuote}</p>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition"
+            >
+              ออกจากระบบ
+            </button>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-4 mt-6">
+            <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 text-center">
+              <div className="text-3xl font-bold text-blue-600">
+                {stats.total}
+              </div>
+              <div className="text-sm text-blue-700 font-medium mt-1">
+                งานทั้งหมด
+              </div>
+            </div>
+            <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4 text-center">
+              <div className="text-3xl font-bold text-yellow-600">
+                {stats.pending}
+              </div>
+              <div className="text-sm text-yellow-700 font-medium mt-1">
+                รอดำเนินการ
+              </div>
+            </div>
+            <div className="bg-green-50 border-2 border-green-300 rounded-lg p-4 text-center">
+              <div className="text-3xl font-bold text-green-600">
+                {stats.done}
+              </div>
+              <div className="text-sm text-green-700 font-medium mt-1">
+                เสร็จสิ้น
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Add Task Form */}
+        <form
+          onSubmit={handleAddTask}
+          className="bg-white rounded-2xl shadow-xl p-6 mb-8 border-t-4 border-purple-500"
+        >
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            ✨ เพิ่มงานใหม่
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Title */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                📌 ชื่องาน <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition"
+                placeholder="พิมพ์ชื่องานที่ต้องทำ..."
+                value={newTask.title}
+                onChange={(e) =>
+                  setNewTask({ ...newTask, title: e.target.value })
+                }
+                required
+              />
+              {formErrors.title && (
+                <div className="mt-2 text-sm text-red-600">
+                  {formErrors.title}
+                </div>
+              )}
+            </div>
+
+            {/* Type */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                📂 ประเภท <span className="text-red-500">*</span>
+              </label>
+              <Listbox
+                value={newTask.type}
+                onChange={(value) => setNewTask({ ...newTask, type: value })}
+              >
+                <div className="relative">
+                  <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-3 pl-4 pr-10 text-left border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
+                    <span className="block truncate font-medium">
+                      {newTask.type === "Homework" ? "📝 การบ้าน" : "📅 แผนงาน"}
+                    </span>
+                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                      <ChevronUpDownIcon
+                        className="h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </Listbox.Button>
+                  <Transition
+                    as={Fragment}
+                    leave="transition ease-in duration-100"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <Listbox.Option
+                        className={({ active }) =>
+                          `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                            active
+                              ? "bg-purple-100 text-purple-900"
+                              : "text-gray-900"
+                          }`
+                        }
+                        value="Homework"
+                      >
+                        {({ selected }) => (
+                          <>
+                            <span
+                              className={`block truncate ${
+                                selected ? "font-bold" : "font-normal"
+                              }`}
+                            >
+                              📝 การบ้าน
+                            </span>
+                            {selected && (
+                              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-600">
+                                <CheckIcon
+                                  className="h-5 w-5"
+                                  aria-hidden="true"
+                                />
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </Listbox.Option>
+                      <Listbox.Option
+                        className={({ active }) =>
+                          `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                            active
+                              ? "bg-purple-100 text-purple-900"
+                              : "text-gray-900"
+                          }`
+                        }
+                        value="Plan"
+                      >
+                        {({ selected }) => (
+                          <>
+                            <span
+                              className={`block truncate ${
+                                selected ? "font-bold" : "font-normal"
+                              }`}
+                            >
+                              📅 แผนงาน
+                            </span>
+                            {selected && (
+                              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-600">
+                                <CheckIcon
+                                  className="h-5 w-5"
+                                  aria-hidden="true"
+                                />
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </Listbox.Option>
+                    </Listbox.Options>
+                  </Transition>
+                </div>
+              </Listbox>
+            </div>
+
+            {/* Subject */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                📚 วิชา <span className="text-red-500">*</span>
+              </label>
+              <Listbox
+                value={newTask.subject}
+                onChange={(value) => setNewTask({ ...newTask, subject: value })}
+              >
+                <div className="relative">
+                  <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-3 pl-4 pr-10 text-left border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
+                    <span className="block truncate font-medium">
+                      {newTask.subject || "เลือกวิชา"}
+                    </span>
+                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                      <ChevronUpDownIcon
+                        className="h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </Listbox.Button>
+                  <Transition
+                    as={Fragment}
+                    leave="transition ease-in duration-100"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      {subjects.map((subject) => (
+                        <Listbox.Option
+                          key={subject}
+                          className={({ active }) =>
+                            `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                              active
+                                ? "bg-purple-100 text-purple-900"
+                                : "text-gray-900"
+                            }`
+                          }
+                          value={subject}
+                        >
+                          {({ selected }) => (
+                            <>
+                              <span
+                                className={`block truncate ${
+                                  selected ? "font-bold" : "font-normal"
+                                }`}
+                              >
+                                {subject}
+                              </span>
+                              {selected ? (
+                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-600">
+                                  <CheckIcon
+                                    className="h-5 w-5"
+                                    aria-hidden="true"
+                                  />
+                                </span>
+                              ) : null}
+                            </>
+                          )}
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </Transition>
+                </div>
+              </Listbox>
+            </div>
+
+            {/* Priority */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                🎯 ระดับความสำคัญ <span className="text-red-500">*</span>
+              </label>
+              <Listbox
+                value={newTask.priority}
+                onChange={(value) =>
+                  setNewTask({ ...newTask, priority: value })
+                }
+              >
+                <div className="relative">
+                  <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-3 pl-4 pr-10 text-left border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
+                    <span className="block truncate font-medium">
+                      {newTask.priority === "High"
+                        ? "🔥 สูง - ต้องทำด่วน"
+                        : newTask.priority === "Medium"
+                        ? "⚡ ปานกลาง - ทำตามปกติ"
+                        : "✅ ต่ำ - ค่อยทำทีหลัง"}
+                    </span>
+                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                      <ChevronUpDownIcon
+                        className="h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </Listbox.Button>
+                  <Transition
+                    as={Fragment}
+                    leave="transition ease-in duration-100"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <Listbox.Option
+                        className={({ active }) =>
+                          `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                            active ? "bg-red-100 text-red-900" : "text-gray-900"
+                          }`
+                        }
+                        value="High"
+                      >
+                        {({ selected }) => (
+                          <>
+                            <span
+                              className={`block truncate ${
+                                selected ? "font-bold" : "font-normal"
+                              }`}
+                            >
+                              🔥 สูง - ต้องทำด่วน
+                            </span>
+                            {selected && (
+                              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-red-600">
+                                <CheckIcon
+                                  className="h-5 w-5"
+                                  aria-hidden="true"
+                                />
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </Listbox.Option>
+                      <Listbox.Option
+                        className={({ active }) =>
+                          `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                            active
+                              ? "bg-yellow-100 text-yellow-900"
+                              : "text-gray-900"
+                          }`
+                        }
+                        value="Medium"
+                      >
+                        {({ selected }) => (
+                          <>
+                            <span
+                              className={`block truncate ${
+                                selected ? "font-bold" : "font-normal"
+                              }`}
+                            >
+                              ⚡ ปานกลาง - ทำตามปกติ
+                            </span>
+                            {selected && (
+                              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-yellow-600">
+                                <CheckIcon
+                                  className="h-5 w-5"
+                                  aria-hidden="true"
+                                />
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </Listbox.Option>
+                      <Listbox.Option
+                        className={({ active }) =>
+                          `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                            active
+                              ? "bg-green-100 text-green-900"
+                              : "text-gray-900"
+                          }`
+                        }
+                        value="Low"
+                      >
+                        {({ selected }) => (
+                          <>
+                            <span
+                              className={`block truncate ${
+                                selected ? "font-bold" : "font-normal"
+                              }`}
+                            >
+                              ✅ ต่ำ - ค่อยทำทีหลัง
+                            </span>
+                            {selected && (
+                              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-green-600">
+                                <CheckIcon
+                                  className="h-5 w-5"
+                                  aria-hidden="true"
+                                />
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </Listbox.Option>
+                    </Listbox.Options>
+                  </Transition>
+                </div>
+              </Listbox>
+            </div>
+
+            {/* Due Date */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                📅 วันครบกำหนด <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <DatePicker
+                  selected={selectedDate}
+                  onChange={(date: Date | null) => {
+                    setSelectedDate(date);
+                    if (date) {
+                      setNewTask({
+                        ...newTask,
+                        dueDate: date.toISOString().split("T")[0],
+                      });
+                    }
+                  }}
+                  dateFormat="dd/MM/yyyy"
+                  placeholderText="เลือกวันที่"
+                  minDate={new Date()}
+                  className="w-full px-4 py-3 pl-12 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition"
+                  calendarClassName="shadow-2xl"
+                  required
+                />
+                <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-6 w-6 text-gray-400 pointer-events-none" />
+                {formErrors.dueDate && (
+                  <div className="mt-2 text-sm text-red-600">
+                    {formErrors.dueDate}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Estimated Time */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                ⏱️ เวลาที่ใช้ (ประมาณ)
+              </label>
+              <Listbox
+                value={newTask.estimatedTime}
+                onChange={(value) =>
+                  setNewTask({ ...newTask, estimatedTime: value })
+                }
+              >
+                <div className="relative">
+                  <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-3 pl-4 pr-10 text-left border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
+                    <span className="block truncate font-medium">
+                      {newTask.estimatedTime || "ไม่ระบุ"}
+                    </span>
+                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                      <ChevronUpDownIcon
+                        className="h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </Listbox.Button>
+                  <Transition
+                    as={Fragment}
+                    leave="transition ease-in duration-100"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <Listbox.Option
+                        value=""
+                        className={({ active }) =>
+                          `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                            active
+                              ? "bg-purple-100 text-purple-900"
+                              : "text-gray-900"
+                          }`
+                        }
+                      >
+                        {({ selected }) => (
+                          <>
+                            <span
+                              className={`block truncate ${
+                                selected ? "font-bold" : "font-normal"
+                              }`}
+                            >
+                              ไม่ระบุ
+                            </span>
+                            {selected && (
+                              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-600">
+                                <CheckIcon
+                                  className="h-5 w-5"
+                                  aria-hidden="true"
+                                />
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </Listbox.Option>
+                      {[
+                        "15 นาที",
+                        "30 นาที",
+                        "1 ชั่วโมง",
+                        "2 ชั่วโมง",
+                        "3+ ชั่วโมง",
+                      ].map((time) => (
+                        <Listbox.Option
+                          key={time}
+                          value={time}
+                          className={({ active }) =>
+                            `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                              active
+                                ? "bg-purple-100 text-purple-900"
+                                : "text-gray-900"
+                            }`
+                          }
+                        >
+                          {({ selected }) => (
+                            <>
+                              <span
+                                className={`block truncate ${
+                                  selected ? "font-bold" : "font-normal"
+                                }`}
+                              >
+                                {time}
+                              </span>
+                              {selected && (
+                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-600">
+                                  <CheckIcon
+                                    className="h-5 w-5"
+                                    aria-hidden="true"
+                                  />
+                                </span>
+                              )}
+                            </>
+                          )}
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </Transition>
+                </div>
+              </Listbox>
+            </div>
+
+            {/* Description */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                📋 รายละเอียดเพิ่มเติม
+              </label>
+              <textarea
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition resize-none"
+                placeholder="เขียนรายละเอียดเพิ่มเติม..."
+                rows={3}
+                value={newTask.description}
+                onChange={(e) =>
+                  setNewTask({ ...newTask, description: e.target.value })
+                }
+              />
+            </div>
+
+            {/* Submit Button */}
+            <div className="md:col-span-2">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold text-lg py-4 px-6 rounded-xl shadow-xl transition transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "กำลังเพิ่ม..." : "✨ เพิ่มงาน"}
+              </button>
+            </div>
+          </div>
+        </form>
+
+        {/* Task List */}
+        <div className="bg-white rounded-2xl shadow-lg p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+              📋 รายการงาน ({tasks.length})
+            </h3>
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition transform hover:scale-105"
+            >
+              📊 Dashboard
+            </button>
+          </div>
+
+          {loading && tasks.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600 mx-auto mb-4"></div>
+              <p className="text-lg font-medium">กำลังโหลดข้อมูล...</p>
+            </div>
+          ) : tasks.length === 0 ? (
+            <div className="text-center py-16 text-gray-400">
+              <div className="text-6xl mb-4">📝</div>
+              <p className="text-xl font-medium">ยังไม่มีงาน</p>
+              <p className="text-sm mt-2">เพิ่มงานใหม่ด้านบนเพื่อเริ่มต้น!</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {tasks
+                .sort((a, b) => {
+                  if (a.status !== b.status) {
+                    return a.status === "Pending" ? -1 : 1;
+                  }
+                  const priorityOrder = { High: 0, Medium: 1, Low: 2 };
+                  return (
+                    priorityOrder[a.priority as keyof typeof priorityOrder] -
+                    priorityOrder[b.priority as keyof typeof priorityOrder]
+                  );
+                })
+                .map((task) => (
+                  <div
+                    key={task.id}
+                    className={`border-2 rounded-xl p-5 transition-all transform hover:scale-[1.01] hover:shadow-lg ${
+                      task.status === "Done"
+                        ? "bg-green-50 border-green-300 opacity-75"
+                        : "bg-white border-gray-300"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-start gap-3 flex-1">
+                        <input
+                          type="checkbox"
+                          checked={task.status === "Done"}
+                          onChange={() => toggleStatus(task)}
+                          className="mt-1 w-5 h-5 accent-purple-600 cursor-pointer"
+                        />
+                        <div className="flex-1">
+                          <h4
+                            className={`text-lg font-bold mb-2 ${
+                              task.status === "Done"
+                                ? "line-through text-gray-500"
+                                : "text-gray-800"
+                            }`}
+                          >
+                            {task.title}
+                          </h4>
+
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            <span
+                              className={`px-3 py-1 rounded-full text-xs font-bold border-2 ${getPriorityColor(
+                                task.priority || "Medium"
+                              )}`}
+                            >
+                              {getPriorityIcon(task.priority || "Medium")}{" "}
+                              {task.priority || "Medium"}
+                            </span>
+
+                            {task.subject && (
+                              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold border-2 border-blue-300">
+                                📚 {task.subject}
+                              </span>
+                            )}
+
+                            <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold border-2 border-purple-300">
+                              {task.type === "Homework" ? "📝" : "📅"}{" "}
+                              {task.type === "Homework" ? "การบ้าน" : "แผนงาน"}
+                            </span>
+
+                            {task.estimatedTime && (
+                              <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-bold border-2 border-orange-300">
+                                ⏱️ {task.estimatedTime}
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="text-sm text-gray-600 space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold">
+                                📅 ครบกำหนด:
+                              </span>
+                              <span>
+                                {new Date(task.dueDate).toLocaleDateString(
+                                  "th-TH",
+                                  {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                  }
+                                )}
+                              </span>
+                            </div>
+
+                            {task.description && (
+                              <div className="flex items-start gap-2">
+                                <span className="font-semibold">
+                                  📝 รายละเอียด:
+                                </span>
+                                <span className="text-gray-700">
+                                  {task.description}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => handleDelete(task.id)}
+                        className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition transform hover:scale-105 active:scale-95"
+                        disabled={loading}
+                      >
+                        🗑️ ลบ
+                      </button>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default HomeworkPage;
