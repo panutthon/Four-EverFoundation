@@ -1,30 +1,24 @@
 import { useState, useEffect, Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import { Listbox, Transition } from "@headlessui/react";
-import { ChevronUpDownIcon, CheckIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronUpDownIcon,
+  CheckIcon,
+  PlusIcon,
+} from "@heroicons/react/24/outline";
 import { CalendarIcon } from "@heroicons/react/24/solid";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Swal from "sweetalert2";
-
-interface Task {
-  id: string;
-  title: string;
-  dueDate: string;
-  status: "Pending" | "Done";
-  type: "Homework" | "Plan";
-  subject?: string;
-  priority?: "Low" | "Medium" | "High";
-  description?: string;
-  category?: string;
-  estimatedTime?: string;
-}
+import type { Task, Subject } from "../types/app";
+import { getTasks, addTask, deleteTask, updateTask } from "../services/tasks";
+import { getSubjects, addSubject } from "../services/subjects";
 
 const HomeworkPage = () => {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
-  const apiUrl = "https://sheetdb.io/api/v1/rfau3x5t1i01p";
+  const [subjects, setSubjects] = useState<Subject[]>([]);
 
   const [newTask, setNewTask] = useState({
     title: "",
@@ -34,26 +28,10 @@ const HomeworkPage = () => {
     priority: "Medium",
     description: "",
     estimatedTime: "",
+    tags: "",
   });
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-
-  const subjects = [
-    "คณิตศาสตร์",
-    "วิทยาศาสตร์",
-    "ภาษาไทย",
-    "ภาษาอังกฤษ",
-    "สังคมศึกษา",
-    "ประวัติศาสตร์",
-    "ฟิสิกส์",
-    "เคมี",
-    "ชีววิทยา",
-    "คอมพิวเตอร์",
-    "ศิลปะ",
-    "ดนตรี",
-    "พละศึกษา",
-    "อื่นๆ",
-  ];
 
   const [formErrors, setFormErrors] = useState<{
     title?: string;
@@ -66,29 +44,50 @@ const HomeworkPage = () => {
       navigate("/");
       return;
     }
-    fetchTasks();
+    fetchData();
   }, [navigate]);
 
-  const fetchTasks = async () => {
+  const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await fetch(apiUrl);
-      if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
-      const data = await res.json();
-      const formattedTasks = data.map((item: any) => ({
-        id: item.id,
-        title: item.title,
-        dueDate: item.dueDate,
-        status: item.status,
-        type: item.type,
-        subject: item.subject || "",
-        priority: item.priority || "Medium",
-        description: item.description || "",
-        estimatedTime: item.estimatedTime || "",
-      }));
-      setTasks(formattedTasks);
+      const [tasksData, subjectsData] = await Promise.all([
+        getTasks(),
+        getSubjects(),
+      ]);
+      setTasks(tasksData);
+
+      if (subjectsData.length === 0) {
+        // Seed default subjects if empty
+        const defaultSubjects = [
+          "คณิตศาสตร์",
+          "วิทยาศาสตร์",
+          "ภาษาไทย",
+          "ภาษาอังกฤษ",
+          "สังคมศึกษา",
+          "ประวัติศาสตร์",
+          "ฟิสิกส์",
+          "เคมี",
+          "ชีววิทยา",
+          "คอมพิวเตอร์",
+          "ศิลปะ",
+          "ดนตรี",
+          "พละศึกษา",
+          "อื่นๆ",
+        ];
+        // We'll add them one by one or just use them locally for now to avoid spamming write limits if not needed,
+        // but user asked for "Add subject" so we should persist them.
+        // For speed, let's just set them in state and rely on "Add Subject" to save new ones?
+        // No, best to save them so they persist for Dashboard.
+        const seeded = await Promise.all(
+          defaultSubjects.map((name) => addSubject(name))
+        );
+        setSubjects(seeded);
+      } else {
+        setSubjects(subjectsData);
+      }
     } catch (error) {
-      console.error("Error fetching tasks:", error);
+      console.error("Error fetching data:", error);
+      Swal.fire("Error", "Failed to load data.", "error");
     } finally {
       setLoading(false);
     }
@@ -112,27 +111,28 @@ const HomeworkPage = () => {
 
     setFormErrors({});
 
-    const task: Task = {
-      id: crypto.randomUUID(),
+    const taskData = {
       title: newTask.title,
       dueDate: newTask.dueDate,
-      status: "Pending",
+      status: "Pending" as const,
       type: newTask.type as "Homework" | "Plan",
       subject: newTask.subject || "ทั่วไป",
       priority: newTask.priority as "Low" | "Medium" | "High",
       description: newTask.description,
       estimatedTime: newTask.estimatedTime,
+      tags: newTask.tags
+        ? newTask.tags
+            .split(",")
+            .map((t) => t.trim())
+            .filter(Boolean)
+        : [],
+      updatedAt: Date.now(),
     };
 
     setLoading(true);
     try {
-      const res = await fetch(apiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: task }),
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
-      setTasks([...tasks, task]);
+      const addedTask = await addTask(taskData);
+      setTasks([...tasks, addedTask]);
       setNewTask({
         title: "",
         dueDate: "",
@@ -141,13 +141,48 @@ const HomeworkPage = () => {
         priority: "Medium",
         description: "",
         estimatedTime: "",
+        tags: "",
       });
       setSelectedDate(null);
+      Swal.fire({
+        icon: "success",
+        title: "เพิ่มงานสำเร็จ",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     } catch (error) {
       console.error("Error adding task:", error);
-      alert("Failed to add task");
+      Swal.fire("Error", "Failed to add task", "error");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddSubject = async () => {
+    const { value: subjectName } = await Swal.fire({
+      title: "เพิ่มวิชาใหม่",
+      input: "text",
+      inputLabel: "ชื่อวิชา",
+      inputPlaceholder: "เช่น ดาราศาสตร์...",
+      showCancelButton: true,
+      confirmButtonText: "เพิ่ม",
+      cancelButtonText: "ยกเลิก",
+      inputValidator: (value) => {
+        if (!value) {
+          return "กรุณากรอกชื่อวิชา!";
+        }
+      },
+    });
+
+    if (subjectName) {
+      try {
+        const newSubject = await addSubject(subjectName);
+        setSubjects([...subjects, newSubject]);
+        setNewTask({ ...newTask, subject: subjectName }); // Auto select
+        Swal.fire("สำเร็จ", "เพิ่มวิชาเรียนบร้อย", "success");
+      } catch (err) {
+        Swal.fire("Error", "Failed to add subject", "error");
+      }
     }
   };
 
@@ -166,10 +201,7 @@ const HomeworkPage = () => {
 
     setLoading(true);
     try {
-      const res = await fetch(`${apiUrl}/id/${encodeURIComponent(id)}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+      await deleteTask(id);
       setTasks(tasks.filter((t) => t.id !== id));
       await Swal.fire({
         title: "ลบแล้ว",
@@ -204,14 +236,10 @@ const HomeworkPage = () => {
     setTasks(updatedTasks as Task[]);
 
     try {
-      await fetch(`${apiUrl}/id/${encodeURIComponent(task.id)}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: { status: newStatus } }),
-      });
+      await updateTask(task.id, { status: newStatus });
     } catch (error) {
       console.error("Error updating status:", error);
-      fetchTasks();
+      await fetchData(); // Revert on error
     }
   };
 
@@ -463,10 +491,10 @@ const HomeworkPage = () => {
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                   >
-                    <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none scrollbar-thin scrollbar-thumb-purple-200">
                       {subjects.map((subject) => (
                         <Listbox.Option
-                          key={subject}
+                          key={subject.id}
                           className={({ active }) =>
                             `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
                               active
@@ -474,7 +502,7 @@ const HomeworkPage = () => {
                                 : "text-gray-900"
                             }`
                           }
-                          value={subject}
+                          value={subject.name}
                         >
                           {({ selected }) => (
                             <>
@@ -483,7 +511,7 @@ const HomeworkPage = () => {
                                   selected ? "font-bold" : "font-normal"
                                 }`}
                               >
-                                {subject}
+                                {subject.name}
                               </span>
                               {selected ? (
                                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-600">
@@ -501,6 +529,13 @@ const HomeworkPage = () => {
                   </Transition>
                 </div>
               </Listbox>
+              <button
+                type="button"
+                onClick={handleAddSubject}
+                className="mt-2 text-sm text-purple-600 hover:text-purple-800 font-medium flex items-center gap-1"
+              >
+                <PlusIcon className="h-4 w-4" /> เพิ่มวิชาใหม่
+              </button>
             </div>
 
             {/* Priority */}
@@ -693,7 +728,7 @@ const HomeworkPage = () => {
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                   >
-                    <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Listbox.Options className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <Listbox.Option
                         value=""
                         className={({ active }) =>
@@ -767,6 +802,22 @@ const HomeworkPage = () => {
                   </Transition>
                 </div>
               </Listbox>
+            </div>
+
+            {/* Tags */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                🏷️ แท็ก (คั่นด้วยจุลภาค)
+              </label>
+              <input
+                type="text"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition"
+                placeholder="เช่น สอบเก็บคะแนน, งานกลุ่ม, สำคัญมาก"
+                value={newTask.tags}
+                onChange={(e) =>
+                  setNewTask({ ...newTask, tags: e.target.value })
+                }
+              />
             </div>
 
             {/* Description */}

@@ -13,11 +13,11 @@
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
     "@tailwindcss/vite": "^4.1.17",
+    "firebase": "^12.6.0",
     "react": "^19.2.0",
     "react-datepicker": "^9.0.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.10.1",
-    "sheetdb-js": "^1.0.3",
     "sweetalert2": "^11.26.4",
     "tailwindcss": "^4.1.17"
   },

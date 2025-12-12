@@ -1,19 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-
-interface Task {
-  id: string;
-  title: string;
-  dueDate: string;
-  status: "Pending" | "Done";
-  type: "Homework" | "Plan";
-  subject?: string;
-  priority?: "Low" | "Medium" | "High";
-  description?: string;
-  category?: string;
-  estimatedTime?: string;
-  tags?: string[];
-}
+import type { Task } from "../types/app";
+import { getTasks } from "../services/tasks";
 
 interface DashboardStats {
   total: number;
@@ -47,36 +35,21 @@ const DashboardPage = () => {
   >("all");
   const [selectedSubject, setSelectedSubject] = useState<string>("all");
 
-  const apiUrl = "https://sheetdb.io/api/v1/rfau3x5t1i01p";
-
   useEffect(() => {
     const isAuth = localStorage.getItem("isAuthenticated");
     if (!isAuth) {
       navigate("/");
       return;
     }
-    fetchTasks();
+    loadData();
   }, [navigate]);
 
-  const fetchTasks = async () => {
+  const loadData = async () => {
     setLoading(true);
     try {
-      const res = await fetch(apiUrl);
-      if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
-      const data = await res.json();
-      const formattedTasks = data.map((item: any) => ({
-        id: item.id,
-        title: item.title,
-        dueDate: item.dueDate,
-        status: item.status,
-        type: item.type,
-        subject: item.subject || "ทั่วไป",
-        priority: item.priority || "Medium",
-        description: item.description || "",
-        estimatedTime: item.estimatedTime || "",
-      }));
-      setTasks(formattedTasks);
-      calculateStats(formattedTasks);
+      const tasksData = await getTasks();
+      setTasks(tasksData);
+      calculateStats(tasksData);
     } catch (error) {
       console.error("Error fetching tasks:", error);
     } finally {

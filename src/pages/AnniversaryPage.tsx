@@ -1,23 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-interface Task {
-  id: string;
-  title: string;
-  dueDate: string;
-  status: "Pending" | "Done";
-  type: "Homework" | "Plan";
-  subject?: string;
-  priority?: "Low" | "Medium" | "High";
-  description?: string;
-  estimatedTime?: string;
-}
+import type { Task } from "../types/app";
+import { getTasks, updateTask } from "../services/tasks";
 
 const AnniversaryPage = () => {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
-  const apiUrl = "https://sheetdb.io/api/v1/rfau3x5t1i01p";
   const [imageSrc, setImageSrc] = useState<string>("/images/anniversary.jpg");
   const [imageAttempt, setImageAttempt] = useState<number>(0);
   const remoteFallback =
@@ -29,28 +18,15 @@ const AnniversaryPage = () => {
       navigate("/");
       return;
     }
-    fetchTasks();
+    loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchTasks = async () => {
+  const loadData = async () => {
     setLoading(true);
     try {
-      const res = await fetch(apiUrl);
-      if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
-      const data = await res.json();
-      const formatted = data.map((it: any) => ({
-        id: it.id,
-        title: it.title,
-        dueDate: it.dueDate,
-        status: it.status,
-        type: it.type,
-        subject: it.subject || "",
-        priority: it.priority || "Medium",
-        description: it.description || "",
-        estimatedTime: it.estimatedTime || "",
-      }));
-      setTasks(formatted);
+      const tasksData = await getTasks();
+      setTasks(tasksData);
     } catch (err) {
       console.error("Error fetching tasks:", err);
     } finally {
@@ -64,14 +40,10 @@ const AnniversaryPage = () => {
       prev.map((t) => (t.id === task.id ? { ...t, status: newStatus } : t))
     );
     try {
-      await fetch(`${apiUrl}/id/${encodeURIComponent(task.id)}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: { status: newStatus } }),
-      });
+      await updateTask(task.id, { status: newStatus });
     } catch (err) {
       console.error("Error updating status:", err);
-      fetchTasks();
+      loadData();
     }
   };
 
