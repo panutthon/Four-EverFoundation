@@ -1,5 +1,5 @@
 
-const WEBHOOK_URL = "https://discord.com/api/webhooks/1449268988096942294/QIEo1SINXYh1ZIslFGgYKaucTyJQ6hFy9jVIq9JTNVt6ixWKp2YwAWjHI7tEbfxvmHBj";
+const WEBHOOK_URL = "s";
 
 export const DISCORD_COLORS = {
     PRIMARY: 3447003, // Blue
