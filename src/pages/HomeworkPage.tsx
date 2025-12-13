@@ -15,7 +15,7 @@ import "./HomeworkPage.css";
 import { getTasks, addTask, deleteTask, updateTask } from "../services/tasks";
 import { getSubjects, addSubject } from "../services/subjects";
 import { sendDiscordNotification, DISCORD_COLORS } from "../services/discord";
-import { ThemeToggle } from "../components/ThemeToggle";
+import { Navbar } from "../components/Navbar";
 
 const HomeworkPage = () => {
   const navigate = useNavigate();
@@ -329,24 +329,7 @@ const HomeworkPage = () => {
     }
   };
 
-  const handleLogout = async () => {
-    const result = await Swal.fire({
-      title: "จะไปแล้วหรอ?",
-      text: "ออกจากระบบแล้วจะคิดถึงนะ!",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "ไปก็ได้",
-      cancelButtonText: "อยู่ต่อ",
-      reverseButtons: true,
-      confirmButtonColor: "#EF4444",
-      cancelButtonColor: "#6B7280",
-    });
 
-    if (result.isConfirmed) {
-      localStorage.removeItem("isAuthenticated");
-      navigate("/");
-    }
-  };
 
   const toggleStatus = async (task: Task) => {
     const newStatus = task.status === "Pending" ? "Done" : "Pending";
@@ -421,65 +404,41 @@ const HomeworkPage = () => {
 
   return (
     <div className="min-h-screen bg-purple-50 dark:bg-gray-900 transition-colors duration-300">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-md border-b-4 border-pastel-purple transition-colors duration-300">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="text-center sm:text-left">
-              <h1 className="text-3xl font-bold text-pastel-pink">
-                📝 จัดการการบ้าน
-              </h1>
-              <p className="text-gray-600 dark:text-gray-300 mt-2 text-lg">{randomQuote}</p>
-            </div>
-            <div className="flex gap-3">
-              <ThemeToggle />
-              <button
-                onClick={() => navigate("/dashboard")}
-                className="w-full sm:w-auto px-4 py-2 bg-pastel-blue hover:bg-pastel-blue/80 text-white font-semibold rounded-lg transition"
-              >
-                📊 Dashboard
-              </button>
-              <button
-                onClick={handleLogout}
-                className="w-full sm:w-auto px-4 py-2 bg-pastel-red hover:bg-pastel-red/80 text-white font-semibold rounded-lg transition"
-              >
-                ออกจากระบบ
-              </button>
-            </div>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-            <div className="bg-pastel-blue/10 border-2 border-pastel-blue rounded-lg p-4 text-center">
-              <div className="text-3xl font-bold text-pastel-blue">
-                {stats.total}
-              </div>
-              <div className="text-sm text-pastel-blue font-medium mt-1">
-                งานทั้งหมด
-              </div>
-            </div>
-            <div className="bg-pastel-yellow/10 border-2 border-pastel-yellow rounded-lg p-4 text-center">
-              <div className="text-3xl font-bold text-pastel-yellow">
-                {stats.pending}
-              </div>
-              <div className="text-sm text-pastel-yellow font-medium mt-1">
-                รอดำเนินการ
-              </div>
-            </div>
-            <div className="bg-pastel-green/10 border-2 border-pastel-green rounded-lg p-4 text-center">
-              <div className="text-3xl font-bold text-pastel-green">
-                {stats.done}
-              </div>
-              <div className="text-sm text-pastel-green font-medium mt-1">
-                เสร็จสิ้น
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Navbar
+        title="📝 จัดการการบ้าน"
+        quote={randomQuote}
+        borderColor="border-pastel-purple"
+      />
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <div className="bg-pastel-blue/10 border-2 border-pastel-blue rounded-lg p-4 text-center">
+            <div className="text-3xl font-bold text-pastel-blue">
+              {stats.total}
+            </div>
+            <div className="text-sm text-pastel-blue font-medium mt-1">
+              งานทั้งหมด
+            </div>
+          </div>
+          <div className="bg-pastel-yellow/10 border-2 border-pastel-yellow rounded-lg p-4 text-center">
+            <div className="text-3xl font-bold text-pastel-yellow">
+              {stats.pending}
+            </div>
+            <div className="text-sm text-pastel-yellow font-medium mt-1">
+              รอดำเนินการ
+            </div>
+          </div>
+          <div className="bg-pastel-green/10 border-2 border-pastel-green rounded-lg p-4 text-center">
+            <div className="text-3xl font-bold text-pastel-green">
+              {stats.done}
+            </div>
+            <div className="text-sm text-pastel-green font-medium mt-1">
+              เสร็จสิ้น
+            </div>
+          </div>
+        </div>
 
 
         <Transition appear show={isModalOpen} as={Fragment}>

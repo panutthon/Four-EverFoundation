@@ -5,11 +5,11 @@ import { ChevronUpDownIcon, CheckIcon } from "@heroicons/react/20/solid";
 import type { Task, Subject } from "../types/app";
 import { getTasks } from "../services/tasks";
 import { getSubjects } from "../services/subjects";
-import Swal from "sweetalert2";
+
 
 import { updateTask } from "../services/tasks";
 import { sendDiscordNotification, DISCORD_COLORS } from "../services/discord";
-import { ThemeToggle } from "../components/ThemeToggle";
+import { Navbar } from "../components/Navbar";
 
 interface DashboardStats {
   total: number;
@@ -137,24 +137,7 @@ const DashboardPage = () => {
     }
   };
 
-  const handleLogout = async () => {
-    const result = await Swal.fire({
-      title: "จะไปแล้วหรอ?",
-      text: "ออกจากระบบแล้วจะคิดถึงนะ!",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "ไปก็ได้",
-      cancelButtonText: "อยู่ต่อ",
-      reverseButtons: true,
-      confirmButtonColor: "#EF4444",
-      cancelButtonColor: "#6B7280",
-    });
 
-    if (result.isConfirmed) {
-      localStorage.removeItem("isAuthenticated");
-      navigate("/");
-    }
-  };
 
   const getTasksByCategory = () => {
     const categories: Record<string, Task[]> = {};
@@ -292,42 +275,20 @@ const DashboardPage = () => {
   return (
     <div className="min-h-screen bg-indigo-50 dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-md border-b-4 border-pastel-pink transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row justify-between items-center py-6 gap-4">
-            <div>
-              <h1 className="text-4xl font-bold text-pastel-blue">
-                <Link
-                  to="/anniversary"
-                  className="inline-flex items-center gap-2 hover:underline cursor-pointer"
-                  aria-label="ไปหน้าครบรอบ"
-                >
-                  📊 Dashboard
-                </Link>
-              </h1>
-              <p className="text-gray-700 mt-1 font-medium">{getGreeting()}</p>
-              <p className="text-sm text-gray-500 mt-1">
-                {getMotivationalQuote()}
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <ThemeToggle />
-              <button
-                onClick={() => navigate("/homework")}
-                className="px-6 py-2.5 bg-pastel-blue hover:bg-pastel-blue/80 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105"
-              >
-                📝 จัดการงาน
-              </button>
-              <button
-                onClick={handleLogout}
-                className="px-6 py-2.5 bg-pastel-red hover:bg-pastel-red/80 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105"
-              >
-                ออกจากระบบ
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Navbar
+        title={
+          <Link
+            to="/anniversary"
+            className="inline-flex items-center gap-2 hover:underline cursor-pointer"
+            aria-label="ไปหน้าครบรอบ"
+          >
+            📊 Dashboard
+          </Link>
+        }
+        subtitle={getGreeting()}
+        quote={getMotivationalQuote()}
+        borderColor="border-pastel-pink"
+      />
 
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         {/* Quick Stats Overview */}

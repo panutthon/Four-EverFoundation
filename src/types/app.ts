@@ -18,3 +18,13 @@ export interface Subject {
   id: string;
   name: string;
 }
+
+export interface ClassSchedule {
+  id: string;
+  day: "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
+  startTime: string; // HH:mm
+  endTime: string; // HH:mm
+  subject: string;
+  room?: string;
+  note?: string;
+}

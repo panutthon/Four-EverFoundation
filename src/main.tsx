@@ -9,6 +9,7 @@ import HomeworkPage from "./pages/HomeworkPage";
 import SubjectPage from "./pages/SubjectPage";
 import DashboardPage from "./pages/DashboardPage";
 import AnniversaryPage from "./pages/AnniversaryPage";
+import TimetablePage from "./pages/TimetablePage";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -19,6 +20,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/subjects" element={<SubjectPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/anniversary" element={<AnniversaryPage />} />
+        <Route path="/timetable" element={<TimetablePage />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
