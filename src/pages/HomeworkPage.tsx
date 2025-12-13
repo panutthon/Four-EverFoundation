@@ -423,18 +423,18 @@ const HomeworkPage = () => {
             </div>
           </div>
           <div className="bg-pastel-yellow/10 border-2 border-pastel-yellow rounded-lg p-4 text-center">
-            <div className="text-3xl font-bold text-pastel-yellow">
+            <div className="text-3xl font-bold text-yellow-400 dark:text-yellow-400">
               {stats.pending}
             </div>
-            <div className="text-sm text-pastel-yellow font-medium mt-1">
+            <div className="text-sm text-yellow-400 dark:text-yellow-400 font-medium mt-1">
               รอดำเนินการ
             </div>
           </div>
           <div className="bg-pastel-green/10 border-2 border-pastel-green rounded-lg p-4 text-center">
-            <div className="text-3xl font-bold text-pastel-green">
+            <div className="text-3xl font-bold text-green-400 dark:text-green-400">
               {stats.done}
             </div>
-            <div className="text-sm text-pastel-green font-medium mt-1">
+            <div className="text-sm text-green-400 dark:text-green-400 font-medium mt-1">
               เสร็จสิ้น
             </div>
           </div>

@@ -13,19 +13,19 @@
 }
 
 @font-face {
-  font-family: "SaSom";
-  src: url("./assets/fonts/KMSaSomDemo.ttf") format("truetype");
+  font-family: "Itim-Regular";
+  src: url("./assets/fonts/Itim-Regular.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
 
 @layer base {
   * {
-    font-family: "SaSom";
+    font-family: "Itim-Regular";
   }
 
   .font-english {
-    font-family: "Inter", system-ui, -apple-system, sans-serif;
+    font-family: "Itim-Regular";
   }
 
   body {
