@@ -127,7 +127,7 @@ const HomeworkPage = () => {
           if (oldVal !== newVal) {
             return `\`\`\`diff\n- ${oldVal || "ไม่ระบุ"}\n+ ${newVal || "ไม่ระบุ"}\n\`\`\``;
           }
-          return newVal || "ไม่ระบุ";
+          return `\`\`\`${newVal || "ไม่ระบุ"}\`\`\``;
         };
 
         const fields = [
@@ -139,17 +139,17 @@ const HomeworkPage = () => {
           {
             name: "📚 วิชา",
             value: getDiffValue(originalTask?.subject || "", taskData.subject),
-            inline: true
+            inline: false
           },
           {
             name: "🎯 ความสำคัญ",
             value: getDiffValue(originalTask?.priority || "", taskData.priority),
-            inline: true
+            inline: false
           },
           {
             name: "📅 กำหนดส่ง",
             value: getDiffValue(originalTask?.dueDate || "", taskData.dueDate || ""),
-            inline: true
+            inline: false
           }
         ];
 
@@ -163,7 +163,7 @@ const HomeworkPage = () => {
 
         await sendDiscordNotification(
           "✏️ แก้ไขงาน",
-          `มีการแก้ไขข้อมูลงานโดย ${localStorage.getItem("username") || "User"}`,
+          `มีการแก้ไขข้อมูลงานโดย${localStorage.getItem("username") || "ที่รัก"}`,
           DISCORD_COLORS.WARNING,
           fields
         );
@@ -179,19 +179,19 @@ const HomeworkPage = () => {
 
         // Notify
         const fields = [
-          { name: "📌 ชื่องาน", value: taskData.title, inline: false },
-          { name: "📚 วิชา", value: taskData.subject, inline: true },
-          { name: "🎯 ความสำคัญ", value: taskData.priority, inline: true },
-          { name: "📅 กำหนดส่ง", value: taskData.dueDate || "ไม่ระบุ", inline: true }
+          { name: "📌 ชื่องาน", value: `\`\`\`${taskData.title}\`\`\``, inline: false },
+          { name: "📚 วิชา", value: `\`\`\`${taskData.subject}\`\`\``, inline: false },
+          { name: "🎯 ความสำคัญ", value: `\`\`\`${taskData.priority}\`\`\``, inline: false },
+          { name: "📅 กำหนดส่ง", value: `\`\`\`${taskData.dueDate || "ไม่ระบุ"}\`\`\``, inline: false }
         ];
 
         if (taskData.description) {
-          fields.push({ name: "📝 รายละเอียด", value: taskData.description, inline: false });
+          fields.push({ name: "📝 รายละเอียด", value: `\`\`\`${taskData.description}\`\`\``, inline: false });
         }
 
         await sendDiscordNotification(
           "✨ เพิ่มงานใหม่",
-          "มีงานการบ้านใหม่จ้า! รีบปั่นนะเดี๋ยวไม่ทัน 🔥",
+          "ที่รักคะ มีงานมาใหม่จ้า! รีบปั่นนะเดี๋ยวไม่ทัน 🔥",
           DISCORD_COLORS.PRIMARY,
           fields
         );
@@ -304,10 +304,15 @@ const HomeworkPage = () => {
       });
 
       // Notify
+      const taskToDelete = tasks.find((t) => t.id === id);
       await sendDiscordNotification(
         "🗑️ ลบงาน",
-        `งาน **${tasks.find((t) => t.id === id)?.title}** ถูกลบออกจากระบบ`,
-        DISCORD_COLORS.DANGER
+        `งานถูกลบออกจากระบบเรียบร้อยแล้วค่ะที่รัก`,
+        DISCORD_COLORS.DANGER,
+        [
+          { name: "📌 ชื่องาน", value: `\`\`\`${taskToDelete?.title || "ไม่ทราบชื่อ"}\`\`\``, inline: false },
+          { name: "📚 วิชา", value: `\`\`\`${taskToDelete?.subject || "ไม่ระบุ"}\`\`\``, inline: false }
+        ]
       );
     } catch (error) {
       console.error("Error deleting task:", error);
@@ -339,12 +344,12 @@ const HomeworkPage = () => {
 
       if (newStatus === "Done") {
         await sendDiscordNotification(
-          "✅ งานเสร็จสิ้น!",
-          "ขอแสดงความยินดี! คุณทำงานนี้สำเร็จแล้ว 🎉",
+          "✅ งานเสร็จแล้วว!",
+          "ดีใจด้วยที่รัก! เก่งมากค่ะ คนเก่งของเค้า 🎉",
           DISCORD_COLORS.SUCCESS,
           [
-            { name: "📌 ชื่องาน", value: task.title, inline: false },
-            { name: "📚 วิชา", value: task.subject, inline: true }
+            { name: "📌 ชื่องาน", value: `\`\`\`${task.title}\`\`\``, inline: false },
+            { name: "📚 วิชา", value: `\`\`\`${task.subject}\`\`\``, inline: false }
           ]
         );
       }
