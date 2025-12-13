@@ -13,6 +13,7 @@ import Swal from "sweetalert2";
 import type { Task, Subject } from "../types/app";
 import { getTasks, addTask, deleteTask, updateTask } from "../services/tasks";
 import { getSubjects, addSubject } from "../services/subjects";
+import { sendDiscordNotification, DISCORD_COLORS } from "../services/discord";
 
 const HomeworkPage = () => {
   const navigate = useNavigate();
@@ -118,6 +119,13 @@ const HomeworkPage = () => {
           showConfirmButton: false,
           timer: 1500,
         });
+
+        // Notify
+        await sendDiscordNotification(
+          "✏️ แก้ไขงาน",
+          `**ชื่องาน:** ${taskData.title}\n**วิชา:** ${taskData.subject}\n**สถานะ:** แก้ไขข้อมูลเรียบร้อย`,
+          DISCORD_COLORS.WARNING
+        );
       } else {
         const addedTask = await addTask(taskData);
         setTasks([...tasks, addedTask]);
@@ -127,6 +135,13 @@ const HomeworkPage = () => {
           showConfirmButton: false,
           timer: 1500,
         });
+
+        // Notify
+        await sendDiscordNotification(
+          "✨ เพิ่มงานใหม่",
+          `**ชื่องาน:** ${taskData.title}\n**วิชา:** ${taskData.subject}\n**กำหนดส่ง:** ${taskData.dueDate || "ไม่ระบุ"}\n**ความสำคัญ:** ${taskData.priority}`,
+          DISCORD_COLORS.PRIMARY
+        );
       }
 
       setNewTask({
@@ -234,6 +249,13 @@ const HomeworkPage = () => {
         timer: 1400,
         showConfirmButton: false,
       });
+
+      // Notify
+      await sendDiscordNotification(
+        "🗑️ ลบงาน",
+        `งาน **${tasks.find((t) => t.id === id)?.title}** ถูกลบออกจากระบบ`,
+        DISCORD_COLORS.DANGER
+      );
     } catch (error) {
       console.error("Error deleting task:", error);
       await Swal.fire({
@@ -261,6 +283,14 @@ const HomeworkPage = () => {
 
     try {
       await updateTask(task.id, { status: newStatus });
+
+      if (newStatus === "Done") {
+        await sendDiscordNotification(
+          "✅ งานเสร็จสิ้น!",
+          `**ชื่องาน:** ${task.title}\n**วิชา:** ${task.subject}\nขอแสดงความยินดี! คุณทำงานนี้สำเร็จแล้ว 🎉`,
+          DISCORD_COLORS.SUCCESS
+        );
+      }
     } catch (error) {
       console.error("Error updating status:", error);
       await fetchData(); // Revert on error
