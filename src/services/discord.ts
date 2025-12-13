@@ -11,7 +11,8 @@ export const DISCORD_COLORS = {
 export const sendDiscordNotification = async (
     title: string,
     description: string,
-    color: number
+    color: number,
+    fields?: { name: string; value: string; inline?: boolean }[]
 ) => {
     if (!WEBHOOK_URL || WEBHOOK_URL.includes("YOUR_WEBHOOK_KEY_HERE")) {
         console.warn("Discord Webhook URL is not configured.");
@@ -30,6 +31,7 @@ export const sendDiscordNotification = async (
                         title,
                         description,
                         color,
+                        fields: fields || [],
                         timestamp: new Date().toISOString(),
                         footer: {
                             text: "Four-Ever Notification System",
