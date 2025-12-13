@@ -131,8 +131,8 @@ const SubjectPage = () => {
       {/* Header */}
       <div className="bg-white shadow-md border-b-4 border-purple-500">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <div>
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="text-center sm:text-left">
               <h1 className="text-3xl font-bold text-purple-600">
                 📚 จัดการรายวิชา
               </h1>
@@ -140,10 +140,10 @@ const SubjectPage = () => {
                 เพิ่ม ลบ แก้ไข รายวิชาทั้งหมด
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 w-full sm:w-auto justify-center sm:justify-end">
               <button
                 onClick={() => navigate("/homework")}
-                className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition"
+                className="w-full sm:w-auto px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition"
               >
                 กลับหน้าหลัก
               </button>
@@ -155,13 +155,13 @@ const SubjectPage = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="bg-white rounded-2xl shadow-xl p-6 mb-8">
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
             <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
               รายชื่อวิชา ({subjects.length})
             </h2>
             <button
               onClick={handleAddSubject}
-              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition flex items-center gap-2"
+              className="w-full sm:w-auto px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition flex items-center justify-center gap-2"
             >
               <PlusIcon className="h-5 w-5" /> เพิ่มวิชา
             </button>

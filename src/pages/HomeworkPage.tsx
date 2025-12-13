@@ -1,6 +1,6 @@
 import { useState, useEffect, Fragment } from "react";
 import { useNavigate } from "react-router-dom";
-import { Listbox, Transition } from "@headlessui/react";
+import { Listbox, Transition, Dialog } from "@headlessui/react";
 import {
   ChevronUpDownIcon,
   CheckIcon,
@@ -32,6 +32,7 @@ const HomeworkPage = () => {
   });
 
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
@@ -74,9 +75,10 @@ const HomeworkPage = () => {
     if (!newTask.title || newTask.title.trim() === "") {
       errors.title = "กรุณากรอกชื่องาน";
     }
-    if (!newTask.dueDate) {
-      errors.dueDate = "กรุณาเลือกวันครบกำหนด";
-    }
+    // Due date is now optional
+    // if (!newTask.dueDate) {
+    //   errors.dueDate = "กรุณาเลือกวันครบกำหนด";
+    // }
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -89,16 +91,16 @@ const HomeworkPage = () => {
       title: newTask.title,
       dueDate: newTask.dueDate,
       status: "Pending" as const,
-      type: newTask.type as "Homework" | "Plan",
+      type: newTask.type as "Homework" | "Plan" | "Group Work",
       subject: newTask.subject || "ทั่วไป",
       priority: newTask.priority as "Low" | "Medium" | "High",
       description: newTask.description,
       estimatedTime: newTask.estimatedTime,
       tags: newTask.tags
         ? newTask.tags
-            .split(",")
-            .map((t) => t.trim())
-            .filter(Boolean)
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean)
         : [],
       updatedAt: Date.now(),
     };
@@ -139,6 +141,7 @@ const HomeworkPage = () => {
       });
       setSelectedDate(null);
       setEditingTaskId(null);
+      setIsModalOpen(false);
     } catch (error) {
       console.error("Error saving task:", error);
       Swal.fire("Error", "Failed to save task", "error");
@@ -159,8 +162,8 @@ const HomeworkPage = () => {
       estimatedTime: task.estimatedTime || "",
       tags: task.tags ? task.tags.join(", ") : "",
     });
-    setSelectedDate(new Date(task.dueDate));
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setSelectedDate(task.dueDate ? new Date(task.dueDate) : null);
+    setIsModalOpen(true);
   };
 
   const cancelEdit = () => {
@@ -176,6 +179,7 @@ const HomeworkPage = () => {
       tags: "",
     });
     setSelectedDate(null);
+    setIsModalOpen(false);
   };
 
   const handleAddSubject = async () => {
@@ -311,8 +315,8 @@ const HomeworkPage = () => {
       {/* Header */}
       <div className="bg-white shadow-md border-b-4 border-purple-500">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <div>
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="text-center sm:text-left">
               <h1 className="text-3xl font-bold text-purple-600">
                 📝 จัดการการบ้าน
               </h1>
@@ -320,14 +324,14 @@ const HomeworkPage = () => {
             </div>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition"
+              className="w-full sm:w-auto px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition"
             >
               ออกจากระบบ
             </button>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-4 mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
             <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 text-center">
               <div className="text-3xl font-bold text-blue-600">
                 {stats.total}
@@ -358,549 +362,598 @@ const HomeworkPage = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Add Task Form */}
-        <form
-          onSubmit={handleAddTask}
-          className="bg-white rounded-2xl shadow-xl p-6 mb-8 border-t-4 border-purple-500"
-        >
-          <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-            {editingTaskId ? "✏️ แก้ไขงาน" : "✨ เพิ่มงานใหม่"}
-          </h2>
+        {/* Add Task Button */}
+        <div className="mb-8 flex justify-center">
+          <button
+            type="button"
+            onClick={() => {
+              setEditingTaskId(null);
+              setNewTask({
+                title: "",
+                dueDate: "",
+                type: "Homework",
+                subject: "",
+                priority: "Medium",
+                description: "",
+                estimatedTime: "",
+                tags: "",
+              });
+              setSelectedDate(null);
+              setIsModalOpen(true);
+            }}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-xl py-4 px-6 sm:px-10 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95"
+          >
+            <PlusIcon className="h-8 w-8" />
+            เพิ่มงานใหม่
+          </button>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Title */}
-            <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                📌 ชื่องาน <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition"
-                placeholder="พิมพ์ชื่องานที่ต้องทำ..."
-                value={newTask.title}
-                onChange={(e) =>
-                  setNewTask({ ...newTask, title: e.target.value })
-                }
-                required
-              />
-              {formErrors.title && (
-                <div className="mt-2 text-sm text-red-600">
-                  {formErrors.title}
-                </div>
-              )}
-            </div>
+        <Transition appear show={isModalOpen} as={Fragment}>
+          <Dialog
+            as="div"
+            className="relative z-50"
+            onClose={() => {
+              if (!loading) cancelEdit();
+            }}
+          >
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" />
+            </Transition.Child>
 
-            {/* Type */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                📂 ประเภท <span className="text-red-500">*</span>
-              </label>
-              <Listbox
-                value={newTask.type}
-                onChange={(value) => setNewTask({ ...newTask, type: value })}
-              >
-                <div className="relative">
-                  <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-3 pl-4 pr-10 text-left border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
-                    <span className="block truncate font-medium">
-                      {newTask.type === "Homework" ? "📝 การบ้าน" : "📅 แผนงาน"}
-                    </span>
-                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                      <ChevronUpDownIcon
-                        className="h-5 w-5 text-gray-400"
-                        aria-hidden="true"
-                      />
-                    </span>
-                  </Listbox.Button>
-                  <Transition
-                    as={Fragment}
-                    leave="transition ease-in duration-100"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      <Listbox.Option
-                        className={({ active }) =>
-                          `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                            active
-                              ? "bg-purple-100 text-purple-900"
-                              : "text-gray-900"
-                          }`
-                        }
-                        value="Homework"
-                      >
-                        {({ selected }) => (
-                          <>
-                            <span
-                              className={`block truncate ${
-                                selected ? "font-bold" : "font-normal"
-                              }`}
-                            >
-                              📝 การบ้าน
-                            </span>
-                            {selected && (
-                              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-600">
-                                <CheckIcon
-                                  className="h-5 w-5"
-                                  aria-hidden="true"
-                                />
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </Listbox.Option>
-                      <Listbox.Option
-                        className={({ active }) =>
-                          `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                            active
-                              ? "bg-purple-100 text-purple-900"
-                              : "text-gray-900"
-                          }`
-                        }
-                        value="Plan"
-                      >
-                        {({ selected }) => (
-                          <>
-                            <span
-                              className={`block truncate ${
-                                selected ? "font-bold" : "font-normal"
-                              }`}
-                            >
-                              📅 แผนงาน
-                            </span>
-                            {selected && (
-                              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-600">
-                                <CheckIcon
-                                  className="h-5 w-5"
-                                  aria-hidden="true"
-                                />
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </Listbox.Option>
-                    </Listbox.Options>
-                  </Transition>
-                </div>
-              </Listbox>
-            </div>
-
-            {/* Subject */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                📚 วิชา <span className="text-red-500">*</span>
-              </label>
-              <Listbox
-                value={newTask.subject}
-                onChange={(value) => setNewTask({ ...newTask, subject: value })}
-              >
-                <div className="relative">
-                  <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-3 pl-4 pr-10 text-left border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
-                    <span className="block truncate font-medium">
-                      {newTask.subject || "เลือกวิชา"}
-                    </span>
-                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                      <ChevronUpDownIcon
-                        className="h-5 w-5 text-gray-400"
-                        aria-hidden="true"
-                      />
-                    </span>
-                  </Listbox.Button>
-                  <Transition
-                    as={Fragment}
-                    leave="transition ease-in duration-100"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none scrollbar-thin scrollbar-thumb-purple-200">
-                      {subjects.map((subject) => (
-                        <Listbox.Option
-                          key={subject.id}
-                          className={({ active }) =>
-                            `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                              active
-                                ? "bg-purple-100 text-purple-900"
-                                : "text-gray-900"
-                            }`
-                          }
-                          value={subject.name}
+            <div className="fixed inset-0 overflow-y-auto">
+              <div className="flex min-h-full items-center justify-center p-4 text-center">
+                <Transition.Child
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0 scale-95"
+                  enterTo="opacity-100 scale-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100 scale-100"
+                  leaveTo="opacity-0 scale-95"
+                >
+                  <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-2xl transition-all">
+                    <form onSubmit={handleAddTask} className="p-6 md:p-8">
+                      <div className="flex justify-between items-center mb-6 border-b pb-4">
+                        <Dialog.Title
+                          as="h3"
+                          className="text-2xl font-bold text-gray-800 flex items-center gap-2"
                         >
-                          {({ selected }) => (
-                            <>
-                              <span
-                                className={`block truncate ${
-                                  selected ? "font-bold" : "font-normal"
-                                }`}
-                              >
-                                {subject.name}
-                              </span>
-                              {selected ? (
-                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-600">
-                                  <CheckIcon
-                                    className="h-5 w-5"
+                          {editingTaskId ? "✏️ แก้ไขงาน" : "✨ เพิ่มงานใหม่"}
+                        </Dialog.Title>
+                        <button
+                          type="button"
+                          onClick={cancelEdit}
+                          className="text-gray-400 hover:text-gray-600 transition"
+                        >
+                          <span className="sr-only">Close</span>
+                          <svg
+                            className="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Title */}
+                        <div className="md:col-span-2">
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            📌 ชื่องาน <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition"
+                            placeholder="พิมพ์ชื่องานที่ต้องทำ..."
+                            value={newTask.title}
+                            onChange={(e) =>
+                              setNewTask({ ...newTask, title: e.target.value })
+                            }
+                            required
+                          />
+                          {formErrors.title && (
+                            <div className="mt-2 text-sm text-red-600">
+                              {formErrors.title}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Type */}
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            📂 ประเภท <span className="text-red-500">*</span>
+                          </label>
+                          <Listbox
+                            value={newTask.type}
+                            onChange={(value) =>
+                              setNewTask({ ...newTask, type: value })
+                            }
+                          >
+                            <div className="relative">
+                              <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-3 pl-4 pr-10 text-left border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
+                                <span className="block truncate font-medium">
+                                  {newTask.type === "Homework"
+                                    ? "📝 การบ้าน"
+                                    : newTask.type === "Plan"
+                                      ? "📅 แผนงาน"
+                                      : "👥 งานกลุ่ม"}
+                                </span>
+                                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                  <ChevronUpDownIcon
+                                    className="h-5 w-5 text-gray-400"
                                     aria-hidden="true"
                                   />
                                 </span>
-                              ) : null}
-                            </>
-                          )}
-                        </Listbox.Option>
-                      ))}
-                    </Listbox.Options>
-                  </Transition>
-                </div>
-              </Listbox>
-              <button
-                type="button"
-                onClick={handleAddSubject}
-                className="mt-2 text-sm text-purple-600 hover:text-purple-800 font-medium flex items-center gap-1"
-              >
-                <PlusIcon className="h-4 w-4" /> เพิ่มวิชาใหม่
-              </button>
-            </div>
+                              </Listbox.Button>
+                              <Transition
+                                as={Fragment}
+                                leave="transition ease-in duration-100"
+                                leaveFrom="opacity-100"
+                                leaveTo="opacity-0"
+                              >
+                                <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                  {["Homework", "Plan", "Group Work"].map(
+                                    (type) => (
+                                      <Listbox.Option
+                                        key={type}
+                                        className={({ active }) =>
+                                          `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active
+                                            ? "bg-purple-100 text-purple-900"
+                                            : "text-gray-900"
+                                          }`
+                                        }
+                                        value={type}
+                                      >
+                                        {({ selected }) => (
+                                          <>
+                                            <span
+                                              className={`block truncate ${selected
+                                                ? "font-bold"
+                                                : "font-normal"
+                                                }`}
+                                            >
+                                              {type === "Homework"
+                                                ? "📝 การบ้าน"
+                                                : type === "Plan"
+                                                  ? "📅 แผนงาน"
+                                                  : "👥 งานกลุ่ม"}
+                                            </span>
+                                            {selected && (
+                                              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-600">
+                                                <CheckIcon
+                                                  className="h-5 w-5"
+                                                  aria-hidden="true"
+                                                />
+                                              </span>
+                                            )}
+                                          </>
+                                        )}
+                                      </Listbox.Option>
+                                    )
+                                  )}
+                                </Listbox.Options>
+                              </Transition>
+                            </div>
+                          </Listbox>
+                        </div>
 
-            {/* Priority */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                🎯 ระดับความสำคัญ <span className="text-red-500">*</span>
-              </label>
-              <Listbox
-                value={newTask.priority}
-                onChange={(value) =>
-                  setNewTask({ ...newTask, priority: value })
-                }
-              >
-                <div className="relative">
-                  <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-3 pl-4 pr-10 text-left border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
-                    <span className="block truncate font-medium">
-                      {newTask.priority === "High"
-                        ? "🔥 สูง - ต้องทำด่วน"
-                        : newTask.priority === "Medium"
-                        ? "⚡ ปานกลาง - ทำตามปกติ"
-                        : "✅ ต่ำ - ค่อยทำทีหลัง"}
-                    </span>
-                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                      <ChevronUpDownIcon
-                        className="h-5 w-5 text-gray-400"
-                        aria-hidden="true"
-                      />
-                    </span>
-                  </Listbox.Button>
-                  <Transition
-                    as={Fragment}
-                    leave="transition ease-in duration-100"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      <Listbox.Option
-                        className={({ active }) =>
-                          `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                            active ? "bg-red-100 text-red-900" : "text-gray-900"
-                          }`
-                        }
-                        value="High"
-                      >
-                        {({ selected }) => (
-                          <>
-                            <span
-                              className={`block truncate ${
-                                selected ? "font-bold" : "font-normal"
-                              }`}
-                            >
-                              🔥 สูง - ต้องทำด่วน
-                            </span>
-                            {selected && (
-                              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-red-600">
-                                <CheckIcon
-                                  className="h-5 w-5"
-                                  aria-hidden="true"
-                                />
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </Listbox.Option>
-                      <Listbox.Option
-                        className={({ active }) =>
-                          `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                            active
-                              ? "bg-yellow-100 text-yellow-900"
-                              : "text-gray-900"
-                          }`
-                        }
-                        value="Medium"
-                      >
-                        {({ selected }) => (
-                          <>
-                            <span
-                              className={`block truncate ${
-                                selected ? "font-bold" : "font-normal"
-                              }`}
-                            >
-                              ⚡ ปานกลาง - ทำตามปกติ
-                            </span>
-                            {selected && (
-                              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-yellow-600">
-                                <CheckIcon
-                                  className="h-5 w-5"
-                                  aria-hidden="true"
-                                />
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </Listbox.Option>
-                      <Listbox.Option
-                        className={({ active }) =>
-                          `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                            active
-                              ? "bg-green-100 text-green-900"
-                              : "text-gray-900"
-                          }`
-                        }
-                        value="Low"
-                      >
-                        {({ selected }) => (
-                          <>
-                            <span
-                              className={`block truncate ${
-                                selected ? "font-bold" : "font-normal"
-                              }`}
-                            >
-                              ✅ ต่ำ - ค่อยทำทีหลัง
-                            </span>
-                            {selected && (
-                              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-green-600">
-                                <CheckIcon
-                                  className="h-5 w-5"
-                                  aria-hidden="true"
-                                />
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </Listbox.Option>
-                    </Listbox.Options>
-                  </Transition>
-                </div>
-              </Listbox>
-            </div>
+                        {/* Subject */}
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            📚 วิชา <span className="text-red-500">*</span>
+                          </label>
+                          <Listbox
+                            value={newTask.subject}
+                            onChange={(value) =>
+                              setNewTask({ ...newTask, subject: value })
+                            }
+                          >
+                            <div className="relative">
+                              <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-3 pl-4 pr-10 text-left border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
+                                <span className="block truncate font-medium">
+                                  {newTask.subject || "เลือกวิชา"}
+                                </span>
+                                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                  <ChevronUpDownIcon
+                                    className="h-5 w-5 text-gray-400"
+                                    aria-hidden="true"
+                                  />
+                                </span>
+                              </Listbox.Button>
+                              <Transition
+                                as={Fragment}
+                                leave="transition ease-in duration-100"
+                                leaveFrom="opacity-100"
+                                leaveTo="opacity-0"
+                              >
+                                <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none scrollbar-thin scrollbar-thumb-purple-200">
+                                  {subjects.map((subject) => (
+                                    <Listbox.Option
+                                      key={subject.id}
+                                      className={({ active }) =>
+                                        `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active
+                                          ? "bg-purple-100 text-purple-900"
+                                          : "text-gray-900"
+                                        }`
+                                      }
+                                      value={subject.name}
+                                    >
+                                      {({ selected }) => (
+                                        <>
+                                          <span
+                                            className={`block truncate ${selected
+                                              ? "font-bold"
+                                              : "font-normal"
+                                              }`}
+                                          >
+                                            {subject.name}
+                                          </span>
+                                          {selected ? (
+                                            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-600">
+                                              <CheckIcon
+                                                className="h-5 w-5"
+                                                aria-hidden="true"
+                                              />
+                                            </span>
+                                          ) : null}
+                                        </>
+                                      )}
+                                    </Listbox.Option>
+                                  ))}
+                                </Listbox.Options>
+                              </Transition>
+                            </div>
+                          </Listbox>
+                          <button
+                            type="button"
+                            onClick={handleAddSubject}
+                            className="mt-2 text-sm text-purple-600 hover:text-purple-800 font-medium flex items-center gap-1"
+                          >
+                            <PlusIcon className="h-4 w-4" /> เพิ่มวิชาใหม่
+                          </button>
+                        </div>
 
-            {/* Due Date */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                📅 วันครบกำหนด <span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <DatePicker
-                  selected={selectedDate}
-                  onChange={(date: Date | null) => {
-                    setSelectedDate(date);
-                    if (date) {
-                      setNewTask({
-                        ...newTask,
-                        dueDate: date.toISOString().split("T")[0],
-                      });
-                    }
-                  }}
-                  dateFormat="dd/MM/yyyy"
-                  placeholderText="เลือกวันที่"
-                  minDate={new Date()}
-                  className="w-full px-4 py-3 pl-12 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition"
-                  calendarClassName="shadow-2xl"
-                  required
-                />
-                <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-6 w-6 text-gray-400 pointer-events-none" />
-                {formErrors.dueDate && (
-                  <div className="mt-2 text-sm text-red-600">
-                    {formErrors.dueDate}
-                  </div>
-                )}
+                        {/* Priority */}
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            🎯 ระดับความสำคัญ <span className="text-red-500">*</span>
+                          </label>
+                          <Listbox
+                            value={newTask.priority}
+                            onChange={(value) =>
+                              setNewTask({ ...newTask, priority: value })
+                            }
+                          >
+                            <div className="relative">
+                              <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-3 pl-4 pr-10 text-left border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
+                                <span className="block truncate font-medium">
+                                  {newTask.priority === "High"
+                                    ? "🔥 สูง - ต้องทำด่วน"
+                                    : newTask.priority === "Medium"
+                                      ? "⚡ ปานกลาง - ทำตามปกติ"
+                                      : "✅ ต่ำ - ค่อยทำทีหลัง"}
+                                </span>
+                                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                  <ChevronUpDownIcon
+                                    className="h-5 w-5 text-gray-400"
+                                    aria-hidden="true"
+                                  />
+                                </span>
+                              </Listbox.Button>
+                              <Transition
+                                as={Fragment}
+                                leave="transition ease-in duration-100"
+                                leaveFrom="opacity-100"
+                                leaveTo="opacity-0"
+                              >
+                                <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                  {[
+                                    {
+                                      id: "High",
+                                      t: "🔥 สูง - ต้องทำด่วน",
+                                      c: "text-red-900",
+                                      b: "bg-red-100",
+                                      i: "text-red-600",
+                                    },
+                                    {
+                                      id: "Medium",
+                                      t: "⚡ ปานกลาง - ทำตามปกติ",
+                                      c: "text-yellow-900",
+                                      b: "bg-yellow-100",
+                                      i: "text-yellow-600",
+                                    },
+                                    {
+                                      id: "Low",
+                                      t: "✅ ต่ำ - ค่อยทำทีหลัง",
+                                      c: "text-green-900",
+                                      b: "bg-green-100",
+                                      i: "text-green-600",
+                                    },
+                                  ].map((p) => (
+                                    <Listbox.Option
+                                      key={p.id}
+                                      className={({ active }) =>
+                                        `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active
+                                          ? p.b + " " + p.c
+                                          : "text-gray-900"
+                                        }`
+                                      }
+                                      value={p.id}
+                                    >
+                                      {({ selected }) => (
+                                        <>
+                                          <span
+                                            className={`block truncate ${selected
+                                              ? "font-bold"
+                                              : "font-normal"
+                                              }`}
+                                          >
+                                            {p.t}
+                                          </span>
+                                          {selected && (
+                                            <span
+                                              className={`absolute inset-y-0 left-0 flex items-center pl-3 ${p.i}`}
+                                            >
+                                              <CheckIcon
+                                                className="h-5 w-5"
+                                                aria-hidden="true"
+                                              />
+                                            </span>
+                                          )}
+                                        </>
+                                      )}
+                                    </Listbox.Option>
+                                  ))}
+                                </Listbox.Options>
+                              </Transition>
+                            </div>
+                          </Listbox>
+                        </div>
+
+                        {/* Due Date */}
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            📅 วันครบกำหนด
+                          </label>
+                          <div className="relative">
+                            <DatePicker
+                              selected={selectedDate}
+                              onChange={(date: Date | null) => {
+                                setSelectedDate(date);
+                                if (date) {
+                                  setNewTask({
+                                    ...newTask,
+                                    dueDate: date.toISOString().split("T")[0],
+                                  });
+                                } else {
+                                  setNewTask({
+                                    ...newTask,
+                                    dueDate: "",
+                                  });
+                                }
+                              }}
+                              dateFormat="dd/MM/yyyy"
+                              placeholderText="ไม่ระบุ/เลือกวันที่"
+                              minDate={new Date()}
+                              isClearable
+                              className="w-full px-4 py-3 pl-12 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition"
+                              calendarClassName="shadow-2xl"
+                            />
+                            <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-6 w-6 text-gray-400 pointer-events-none" />
+                            {formErrors.dueDate && (
+                              <div className="mt-2 text-sm text-red-600">
+                                {formErrors.dueDate}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Estimated Time */}
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            ⏱️ เวลาที่ใช้ (ประมาณ)
+                          </label>
+                          <Listbox
+                            value={newTask.estimatedTime}
+                            onChange={(value) =>
+                              setNewTask({ ...newTask, estimatedTime: value })
+                            }
+                          >
+                            <div className="relative">
+                              <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-3 pl-4 pr-10 text-left border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
+                                <span className="block truncate font-medium">
+                                  {newTask.estimatedTime || "ไม่ระบุ"}
+                                </span>
+                                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                  <ChevronUpDownIcon
+                                    className="h-5 w-5 text-gray-400"
+                                    aria-hidden="true"
+                                  />
+                                </span>
+                              </Listbox.Button>
+                              <Transition
+                                as={Fragment}
+                                leave="transition ease-in duration-100"
+                                leaveFrom="opacity-100"
+                                leaveTo="opacity-0"
+                              >
+                                <Listbox.Options className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                  <Listbox.Option
+                                    value=""
+                                    className={({ active }) =>
+                                      `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active
+                                        ? "bg-purple-100 text-purple-900"
+                                        : "text-gray-900"
+                                      }`
+                                    }
+                                  >
+                                    {({ selected }) => (
+                                      <>
+                                        <span
+                                          className={`block truncate ${selected
+                                            ? "font-bold"
+                                            : "font-normal"
+                                            }`}
+                                        >
+                                          ไม่ระบุ
+                                        </span>
+                                        {selected && (
+                                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-600">
+                                            <CheckIcon
+                                              className="h-5 w-5"
+                                              aria-hidden="true"
+                                            />
+                                          </span>
+                                        )}
+                                      </>
+                                    )}
+                                  </Listbox.Option>
+                                  {[
+                                    "15 นาที",
+                                    "30 นาที",
+                                    "1 ชั่วโมง",
+                                    "2 ชั่วโมง",
+                                    "3+ ชั่วโมง",
+                                  ].map((time) => (
+                                    <Listbox.Option
+                                      key={time}
+                                      value={time}
+                                      className={({ active }) =>
+                                        `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active
+                                          ? "bg-purple-100 text-purple-900"
+                                          : "text-gray-900"
+                                        }`
+                                      }
+                                    >
+                                      {({ selected }) => (
+                                        <>
+                                          <span
+                                            className={`block truncate ${selected
+                                              ? "font-bold"
+                                              : "font-normal"
+                                              }`}
+                                          >
+                                            {time}
+                                          </span>
+                                          {selected && (
+                                            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-600">
+                                              <CheckIcon
+                                                className="h-5 w-5"
+                                                aria-hidden="true"
+                                              />
+                                            </span>
+                                          )}
+                                        </>
+                                      )}
+                                    </Listbox.Option>
+                                  ))}
+                                </Listbox.Options>
+                              </Transition>
+                            </div>
+                          </Listbox>
+                        </div>
+
+                        {/* Tags */}
+                        <div className="md:col-span-2">
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            🏷️ แท็ก (คั่นด้วยจุลภาค)
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition"
+                            placeholder="เช่น สอบเก็บคะแนน, งานกลุ่ม, สำคัญมาก"
+                            value={newTask.tags}
+                            onChange={(e) =>
+                              setNewTask({ ...newTask, tags: e.target.value })
+                            }
+                          />
+                        </div>
+
+                        {/* Description */}
+                        <div className="md:col-span-2">
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            📋 รายละเอียดเพิ่มเติม
+                          </label>
+                          <textarea
+                            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition resize-none"
+                            placeholder="เขียนรายละเอียดเพิ่มเติม..."
+                            rows={3}
+                            value={newTask.description}
+                            onChange={(e) =>
+                              setNewTask({
+                                ...newTask,
+                                description: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+
+                        {/* Submit Button */}
+                        <div className="md:col-span-2 flex gap-3">
+                          <button
+                            type="submit"
+                            disabled={loading}
+                            className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold text-lg py-3 px-6 rounded-xl shadow-lg transition transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {loading
+                              ? "กำลังบันทึก..."
+                              : editingTaskId
+                                ? "💾 บันทึกการแก้ไข"
+                                : "✨ เพิ่มงาน"}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={cancelEdit}
+                            disabled={loading}
+                            className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold text-lg py-3 px-6 rounded-xl shadow transition transform hover:scale-105 active:scale-95"
+                          >
+                            ยกเลิก
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </Dialog.Panel>
+                </Transition.Child>
               </div>
             </div>
-
-            {/* Estimated Time */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                ⏱️ เวลาที่ใช้ (ประมาณ)
-              </label>
-              <Listbox
-                value={newTask.estimatedTime}
-                onChange={(value) =>
-                  setNewTask({ ...newTask, estimatedTime: value })
-                }
-              >
-                <div className="relative">
-                  <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-3 pl-4 pr-10 text-left border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
-                    <span className="block truncate font-medium">
-                      {newTask.estimatedTime || "ไม่ระบุ"}
-                    </span>
-                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                      <ChevronUpDownIcon
-                        className="h-5 w-5 text-gray-400"
-                        aria-hidden="true"
-                      />
-                    </span>
-                  </Listbox.Button>
-                  <Transition
-                    as={Fragment}
-                    leave="transition ease-in duration-100"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <Listbox.Options className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      <Listbox.Option
-                        value=""
-                        className={({ active }) =>
-                          `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                            active
-                              ? "bg-purple-100 text-purple-900"
-                              : "text-gray-900"
-                          }`
-                        }
-                      >
-                        {({ selected }) => (
-                          <>
-                            <span
-                              className={`block truncate ${
-                                selected ? "font-bold" : "font-normal"
-                              }`}
-                            >
-                              ไม่ระบุ
-                            </span>
-                            {selected && (
-                              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-600">
-                                <CheckIcon
-                                  className="h-5 w-5"
-                                  aria-hidden="true"
-                                />
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </Listbox.Option>
-                      {[
-                        "15 นาที",
-                        "30 นาที",
-                        "1 ชั่วโมง",
-                        "2 ชั่วโมง",
-                        "3+ ชั่วโมง",
-                      ].map((time) => (
-                        <Listbox.Option
-                          key={time}
-                          value={time}
-                          className={({ active }) =>
-                            `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                              active
-                                ? "bg-purple-100 text-purple-900"
-                                : "text-gray-900"
-                            }`
-                          }
-                        >
-                          {({ selected }) => (
-                            <>
-                              <span
-                                className={`block truncate ${
-                                  selected ? "font-bold" : "font-normal"
-                                }`}
-                              >
-                                {time}
-                              </span>
-                              {selected && (
-                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-600">
-                                  <CheckIcon
-                                    className="h-5 w-5"
-                                    aria-hidden="true"
-                                  />
-                                </span>
-                              )}
-                            </>
-                          )}
-                        </Listbox.Option>
-                      ))}
-                    </Listbox.Options>
-                  </Transition>
-                </div>
-              </Listbox>
-            </div>
-
-            {/* Tags */}
-            <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                🏷️ แท็ก (คั่นด้วยจุลภาค)
-              </label>
-              <input
-                type="text"
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition"
-                placeholder="เช่น สอบเก็บคะแนน, งานกลุ่ม, สำคัญมาก"
-                value={newTask.tags}
-                onChange={(e) =>
-                  setNewTask({ ...newTask, tags: e.target.value })
-                }
-              />
-            </div>
-
-            {/* Description */}
-            <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                📋 รายละเอียดเพิ่มเติม
-              </label>
-              <textarea
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition resize-none"
-                placeholder="เขียนรายละเอียดเพิ่มเติม..."
-                rows={3}
-                value={newTask.description}
-                onChange={(e) =>
-                  setNewTask({ ...newTask, description: e.target.value })
-                }
-              />
-            </div>
-
-            {/* Submit Button */}
-            <div className="md:col-span-2">
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold text-lg py-4 px-6 rounded-xl shadow-xl transition transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading
-                  ? "กำลังบันทึก..."
-                  : editingTaskId
-                  ? "💾 บันทึกการแก้ไข"
-                  : "✨ เพิ่มงาน"}
-              </button>
-              {editingTaskId && (
-                <button
-                  type="button"
-                  onClick={cancelEdit}
-                  disabled={loading}
-                  className="w-full mt-3 bg-gray-500 hover:bg-gray-600 text-white font-bold text-lg py-2 px-6 rounded-xl shadow transition transform hover:scale-105 active:scale-95"
-                >
-                  ❌ ยกเลิก
-                </button>
-              )}
-            </div>
-          </div>
-        </form>
+          </Dialog>
+        </Transition>
 
         {/* Task List */}
         <div className="bg-white rounded-2xl shadow-lg p-6">
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
             <h3 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
               📋 รายการงาน ({tasks.length})
             </h3>
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition transform hover:scale-105"
-            >
-              📊 Dashboard
-            </button>
-            <button
-              onClick={() => navigate("/subjects")}
-              className="ml-2 px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white font-semibold rounded-lg transition transform hover:scale-105"
-            >
-              📚 จัดการวิชา
-            </button>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="flex-1 sm:flex-none px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition transform hover:scale-105 text-center"
+              >
+                📊 Dashboard
+              </button>
+              <button
+                onClick={() => navigate("/subjects")}
+                className="flex-1 sm:flex-none px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white font-semibold rounded-lg transition transform hover:scale-105 text-center"
+              >
+                📚 จัดการวิชา
+              </button>
+            </div>
           </div>
 
           {loading && tasks.length === 0 ? (
@@ -930,34 +983,32 @@ const HomeworkPage = () => {
                 .map((task) => (
                   <div
                     key={task.id}
-                    className={`border-2 rounded-xl p-5 transition-all transform hover:scale-[1.01] hover:shadow-lg ${
-                      task.status === "Done"
-                        ? "bg-green-50 border-green-300 opacity-75"
-                        : "bg-white border-gray-300"
-                    }`}
+                    className={`border-2 rounded-xl p-5 transition-all transform hover:scale-[1.01] hover:shadow-lg ${task.status === "Done"
+                      ? "bg-green-50 border-green-300 opacity-75"
+                      : "bg-white border-gray-300"
+                      }`}
                   >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex items-start gap-3 flex-1">
+                    <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+                      <div className="flex items-start gap-3 flex-1 w-full">
                         <input
                           type="checkbox"
                           checked={task.status === "Done"}
                           onChange={() => toggleStatus(task)}
-                          className="mt-1 w-5 h-5 accent-purple-600 cursor-pointer"
+                          className="mt-1 w-5 h-5 accent-purple-600 cursor-pointer flex-shrink-0"
                         />
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <h4
-                            className={`text-lg font-bold mb-2 ${
-                              task.status === "Done"
-                                ? "line-through text-gray-500"
-                                : "text-gray-800"
-                            }`}
+                            className={`text-lg font-bold mb-2 break-words ${task.status === "Done"
+                              ? "line-through text-gray-500"
+                              : "text-gray-800"
+                              }`}
                           >
                             {task.title}
                           </h4>
 
                           <div className="flex flex-wrap gap-2 mb-3">
                             <span
-                              className={`px-3 py-1 rounded-full text-xs font-bold border-2 ${getPriorityColor(
+                              className={`px-3 py-1 rounded-full text-xs font-bold border-2 whitespace-nowrap ${getPriorityColor(
                                 task.priority || "Medium"
                               )}`}
                             >
@@ -966,18 +1017,26 @@ const HomeworkPage = () => {
                             </span>
 
                             {task.subject && (
-                              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold border-2 border-blue-300">
+                              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold border-2 border-blue-300 whitespace-nowrap">
                                 📚 {task.subject}
                               </span>
                             )}
 
-                            <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold border-2 border-purple-300">
-                              {task.type === "Homework" ? "📝" : "📅"}{" "}
-                              {task.type === "Homework" ? "การบ้าน" : "แผนงาน"}
+                            <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold border-2 border-purple-300 whitespace-nowrap">
+                              {task.type === "Homework"
+                                ? "📝"
+                                : task.type === "Plan"
+                                  ? "📅"
+                                  : "👥"}{" "}
+                              {task.type === "Homework"
+                                ? "การบ้าน"
+                                : task.type === "Plan"
+                                  ? "แผนงาน"
+                                  : "งานกลุ่ม"}
                             </span>
 
                             {task.estimatedTime && (
-                              <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-bold border-2 border-orange-300">
+                              <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-bold border-2 border-orange-300 whitespace-nowrap">
                                 ⏱️ {task.estimatedTime}
                               </span>
                             )}
@@ -985,27 +1044,29 @@ const HomeworkPage = () => {
 
                           <div className="text-sm text-gray-600 space-y-1">
                             <div className="flex items-center gap-2">
-                              <span className="font-semibold">
+                              <span className="font-semibold whitespace-nowrap">
                                 📅 ครบกำหนด:
                               </span>
                               <span>
-                                {new Date(task.dueDate).toLocaleDateString(
-                                  "th-TH",
-                                  {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                  }
-                                )}
+                                {task.dueDate
+                                  ? new Date(task.dueDate).toLocaleDateString(
+                                    "th-TH",
+                                    {
+                                      year: "numeric",
+                                      month: "long",
+                                      day: "numeric",
+                                    }
+                                  )
+                                  : "ไม่ระบุ"}
                               </span>
                             </div>
 
                             {task.description && (
                               <div className="flex items-start gap-2">
-                                <span className="font-semibold">
+                                <span className="font-semibold whitespace-nowrap">
                                   📝 รายละเอียด:
                                 </span>
-                                <span className="text-gray-700">
+                                <span className="text-gray-700 break-words">
                                   {task.description}
                                 </span>
                               </div>
@@ -1014,23 +1075,25 @@ const HomeworkPage = () => {
                         </div>
                       </div>
 
-                      <button
-                        onClick={() => handleDelete(task.id)}
-                        className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition transform hover:scale-105 active:scale-95"
-                        disabled={loading}
-                      >
-                        🗑️ ลบ
-                      </button>
-
-                      {task.status !== "Done" && (
+                      <div className="flex gap-2 w-full sm:w-auto justify-end mt-2 sm:mt-0">
                         <button
-                          onClick={() => startEdit(task)}
-                          className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg transition transform hover:scale-105 active:scale-95"
+                          onClick={() => handleDelete(task.id)}
+                          className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition transform hover:scale-105 active:scale-95 flex-1 sm:flex-none"
                           disabled={loading}
                         >
-                          ✏️ แก้ไข
+                          🗑️ ลบ
                         </button>
-                      )}
+
+                        {task.status !== "Done" && (
+                          <button
+                            onClick={() => startEdit(task)}
+                            className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg transition transform hover:scale-105 active:scale-95 flex-1 sm:flex-none"
+                            disabled={loading}
+                          >
+                            ✏️ แก้ไข
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}

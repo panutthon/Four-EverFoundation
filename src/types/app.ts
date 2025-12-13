@@ -3,7 +3,7 @@ export interface Task {
   title: string;
   dueDate: string; // YYYY-MM-DD
   status: "Pending" | "Done";
-  type: "Homework" | "Plan";
+  type: "Homework" | "Plan" | "Group Work";
   subject: string;
   priority: "Low" | "Medium" | "High";
   description?: string;
