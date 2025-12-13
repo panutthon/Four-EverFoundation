@@ -11,6 +11,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Swal from "sweetalert2";
 import type { Task, Subject } from "../types/app";
+import "./HomeworkPage.css";
 import { getTasks, addTask, deleteTask, updateTask } from "../services/tasks";
 import { getSubjects, addSubject } from "../services/subjects";
 import { sendDiscordNotification, DISCORD_COLORS } from "../services/discord";
@@ -280,11 +281,11 @@ const HomeworkPage = () => {
 
   const handleDelete = async (id: string) => {
     const result = await Swal.fire({
-      title: "คุณแน่ใจหรือไม่?",
+      title: "ที่รักค่ะ แน่ใจอ่ะป่าว?",
       text: "การกระทำนี้จะลบงานออกจากระบบ ไม่สามารถย้อนกลับได้",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "ใช่, ลบเลย",
+      confirmButtonText: "ช่ายย, ลบเยย",
       cancelButtonText: "ยกเลิก",
       reverseButtons: true,
     });
@@ -1011,7 +1012,7 @@ const HomeworkPage = () => {
             <h3 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
               📋 รายการงาน ({tasks.length})
             </h3>
-            <div className="flex flex-wrap gap-2 w-full sm:w-auto justify-end">
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mt-4 sm:mt-0">
               <button
                 type="button"
                 onClick={() => {
@@ -1029,20 +1030,20 @@ const HomeworkPage = () => {
                   setSelectedDate(null);
                   setIsModalOpen(true);
                 }}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition transform hover:scale-105 active:scale-95 shadow-md"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg transition transform hover:scale-105 active:scale-95"
               >
                 <PlusIcon className="h-5 w-5" />
                 เพิ่มงานใหม่
               </button>
               <button
                 onClick={() => navigate("/dashboard")}
-                className="flex-1 sm:flex-none px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition transform hover:scale-105 text-center"
+                className="w-full sm:w-auto px-5 py-2.5 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-bold rounded-xl transition transform hover:scale-105 active:scale-95 border-2 border-indigo-200"
               >
                 📊 Dashboard
               </button>
               <button
                 onClick={() => navigate("/subjects")}
-                className="flex-1 sm:flex-none px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white font-semibold rounded-lg transition transform hover:scale-105 text-center"
+                className="w-full sm:w-auto px-5 py-2.5 bg-pink-100 hover:bg-pink-200 text-pink-700 font-bold rounded-xl transition transform hover:scale-105 active:scale-95 border-2 border-pink-200"
               >
                 📚 จัดการวิชา
               </button>

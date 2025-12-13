@@ -1,7 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import type { Task } from "../types/app";
+import { Listbox, Transition } from "@headlessui/react";
+import { ChevronUpDownIcon, CheckIcon } from "@heroicons/react/20/solid";
+import type { Task, Subject } from "../types/app";
 import { getTasks } from "../services/tasks";
+import { getSubjects } from "../services/subjects";
 
 interface DashboardStats {
   total: number;
@@ -34,6 +37,7 @@ const DashboardPage = () => {
     "all" | "today" | "week" | "overdue" | "high"
   >("all");
   const [selectedSubject, setSelectedSubject] = useState<string>("all");
+  const [subjects, setSubjects] = useState<Subject[]>([]);
 
   useEffect(() => {
     const isAuth = localStorage.getItem("isAuthenticated");
@@ -47,11 +51,15 @@ const DashboardPage = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const tasksData = await getTasks();
+      const [tasksData, subjectsData] = await Promise.all([
+        getTasks(),
+        getSubjects(),
+      ]);
       setTasks(tasksData);
+      setSubjects(subjectsData);
       calculateStats(tasksData);
     } catch (error) {
-      console.error("Error fetching tasks:", error);
+      console.error("Error fetching data:", error);
     } finally {
       setLoading(false);
     }
@@ -397,18 +405,96 @@ const DashboardPage = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 วิชา
               </label>
-              <select
+              <Listbox
                 value={selectedSubject}
-                onChange={(e) => setSelectedSubject(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition font-medium"
+                onChange={setSelectedSubject}
               >
-                <option value="all">ทุกวิชา</option>
-                {getUniqueSubjects().map((subject) => (
-                  <option key={subject} value={subject}>
-                    {subject}
-                  </option>
-                ))}
-              </select>
+                <div className="relative">
+                  <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-2.5 pl-4 pr-10 text-left border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm">
+                    <span className="block truncate font-medium text-gray-700">
+                      {selectedSubject === "all"
+                        ? "ทุกวิชา"
+                        : subjects.find((s) => s.name === selectedSubject)?.name ||
+                        selectedSubject}
+                    </span>
+                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                      <ChevronUpDownIcon
+                        className="h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </Listbox.Button>
+                  <Transition
+                    as={Fragment}
+                    leave="transition ease-in duration-100"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                      <Listbox.Option
+                        key="all"
+                        className={({ active }) =>
+                          `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active
+                            ? "bg-indigo-100 text-indigo-900"
+                            : "text-gray-900"
+                          }`
+                        }
+                        value="all"
+                      >
+                        {({ selected }) => (
+                          <>
+                            <span
+                              className={`block truncate ${selected ? "font-bold" : "font-normal"
+                                }`}
+                            >
+                              ทุกวิชา
+                            </span>
+                            {selected ? (
+                              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-indigo-600">
+                                <CheckIcon
+                                  className="h-5 w-5"
+                                  aria-hidden="true"
+                                />
+                              </span>
+                            ) : null}
+                          </>
+                        )}
+                      </Listbox.Option>
+                      {subjects.map((subject) => (
+                        <Listbox.Option
+                          key={subject.id}
+                          className={({ active }) =>
+                            `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active
+                              ? "bg-indigo-100 text-indigo-900"
+                              : "text-gray-900"
+                            }`
+                          }
+                          value={subject.name}
+                        >
+                          {({ selected }) => (
+                            <>
+                              <span
+                                className={`block truncate ${selected ? "font-bold" : "font-normal"
+                                  }`}
+                              >
+                                {subject.name}
+                              </span>
+                              {selected ? (
+                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-indigo-600">
+                                  <CheckIcon
+                                    className="h-5 w-5"
+                                    aria-hidden="true"
+                                  />
+                                </span>
+                              ) : null}
+                            </>
+                          )}
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </Transition>
+                </div>
+              </Listbox>
             </div>
           </div>
         </div>

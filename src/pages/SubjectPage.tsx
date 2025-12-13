@@ -103,11 +103,11 @@ const SubjectPage = () => {
 
   const handleDeleteSubject = async (id: string) => {
     const result = await Swal.fire({
-      title: "คุณแน่ใจหรือไม่?",
-      text: "การกระทำนี้จะลบวิชานี้ออกจากระบบ",
+      title: "ที่รักค่ะ แน่ใจอ่ะป่าว?",
+      text: "การกระทำนี้จะลบวิชานี้ออกจากระบบ ไม่สามารถย้อนกลับได้",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "ใช่, ลบเลย",
+      confirmButtonText: "ช่ายย, ลบเยย",
       cancelButtonText: "ยกเลิก",
       reverseButtons: true,
     });

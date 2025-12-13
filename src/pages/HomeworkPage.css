@@ -1,126 +1,14 @@
-.homework-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* Override react-datepicker input width to 100% inside our modal */
+.react-datepicker-wrapper {
+  width: 100% !important;
+  display: block !important;
 }
 
-.homework-header {
-  text-align: center;
-  margin-bottom: 30px;
-  color: #333;
+.react-datepicker__input-container {
+  width: 100% !important;
+  display: block !important;
 }
 
-.config-section {
-  background-color: #f8f9fa;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  border: 1px solid #e9ecef;
-}
-
-.input-group {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.input-field {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  flex: 1;
-}
-
-.btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.2s;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: #0056b3;
-}
-
-.btn-success {
-  background-color: #28a745;
-  color: white;
-}
-
-.btn-danger {
-  background-color: #dc3545;
-  color: white;
-}
-
-.task-form {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  margin-bottom: 30px;
-}
-
-.task-list {
-  list-style: none;
-  padding: 0;
-}
-
-.task-item {
-  background-color: #fff;
-  border-bottom: 1px solid #eee;
-  padding: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.task-item:last-child {
-  border-bottom: none;
-}
-
-.task-content {
-  flex: 1;
-}
-
-.task-title {
-  font-size: 1.1em;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.task-meta {
-  font-size: 0.9em;
-  color: #666;
-}
-
-.loading {
-  text-align: center;
-  padding: 20px;
-  color: #666;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.8em;
-  margin-left: 10px;
-}
-
-.status-pending {
-  background-color: #fff3cd;
-  color: #856404;
-}
-
-.status-done {
-  background-color: #d4edda;
-  color: #155724;
+.react-datepicker__input-container input {
+  width: 100% !important;
 }
