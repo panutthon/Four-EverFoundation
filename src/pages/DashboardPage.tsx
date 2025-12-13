@@ -176,13 +176,7 @@ const DashboardPage = () => {
     });
   };
 
-  const getUniqueSubjects = () => {
-    const subjects = new Set<string>();
-    tasks.forEach((task) => {
-      if (task.subject) subjects.add(task.subject);
-    });
-    return Array.from(subjects).sort();
-  };
+
 
   const getFilteredTasks = () => {
     let filtered = tasks;
