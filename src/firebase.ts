@@ -1,7 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
-// วางโค้ด CONFIG ของออมที่คัดลอกมาจาก Firebase Console ตรงนี้
 const firebaseConfig = {
   apiKey: "AIzaSyArKpR-6RaQC2fblRKqZHlAeyr1axAYk7g",
   authDomain: "gam-aom-todo-app.firebaseapp.com",

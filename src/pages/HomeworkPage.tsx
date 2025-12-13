@@ -229,7 +229,7 @@ const HomeworkPage = () => {
       priority: task.priority,
       description: task.description || "",
       estimatedTime: task.estimatedTime || "",
-      tags: task.tags ? task.tags.join(", ") : "",
+      tags: task.tags ? (Array.isArray(task.tags) ? task.tags.join(", ") : task.tags) : "",
     });
     setSelectedDate(task.dueDate ? new Date(task.dueDate) : null);
     setIsModalOpen(true);
@@ -327,9 +327,23 @@ const HomeworkPage = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    navigate("/");
+  const handleLogout = async () => {
+    const result = await Swal.fire({
+      title: "จะไปแล้วหรอ?",
+      text: "ออกจากระบบแล้วจะคิดถึงนะ!",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "ไปก็ได้",
+      cancelButtonText: "อยู่ต่อ",
+      reverseButtons: true,
+      confirmButtonColor: "#EF4444",
+      cancelButtonColor: "#6B7280",
+    });
+
+    if (result.isConfirmed) {
+      localStorage.removeItem("isAuthenticated");
+      navigate("/");
+    }
   };
 
   const toggleStatus = async (task: Task) => {
@@ -1133,6 +1147,21 @@ const HomeworkPage = () => {
                               <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-bold border-2 border-orange-300 whitespace-nowrap">
                                 ⏱️ {task.estimatedTime}
                               </span>
+                            )}
+
+                            {task.tags && typeof task.tags === 'string' && task.tags.trim() !== '' && (
+                              task.tags.split(',').map((tag, index) => (
+                                <span key={index} className="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs font-bold border-2 border-teal-300 whitespace-nowrap">
+                                  🏷️ {tag.trim()}
+                                </span>
+                              ))
+                            )}
+                            {task.tags && Array.isArray(task.tags) && task.tags.length > 0 && (
+                              task.tags.map((tag, index) => (
+                                <span key={index} className="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs font-bold border-2 border-teal-300 whitespace-nowrap">
+                                  🏷️ {tag}
+                                </span>
+                              ))
                             )}
                           </div>
 

@@ -10,7 +10,7 @@ export interface Task {
   estimatedTime?: string;
   createdAt?: number;
   updatedAt?: number;
-  tags?: string[];
+  tags?: string | string[];
   reminders?: number[]; // Array of timestamps for notifications
 }
 

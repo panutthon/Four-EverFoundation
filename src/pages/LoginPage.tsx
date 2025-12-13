@@ -76,7 +76,7 @@ const LoginPage = () => {
             type="submit"
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 transform hover:scale-105 active:scale-95"
           >
-            เข้าสู่ระบบแก้มออม
+            เข้าสู่ระบบแบร่ๆ
           </button>
         </form>
 

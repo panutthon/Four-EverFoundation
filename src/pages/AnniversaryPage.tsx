@@ -26,7 +26,9 @@ const AnniversaryPage = () => {
     setLoading(true);
     try {
       const tasksData = await getTasks();
-      setTasks(tasksData);
+      // Filter only tasks with subject "วิชาแฟน"
+      const filteredTasks = tasksData.filter((t) => t.subject === "แฟน");
+      setTasks(filteredTasks);
     } catch (err) {
       console.error("Error fetching tasks:", err);
     } finally {
@@ -117,11 +119,10 @@ const AnniversaryPage = () => {
                 {tasks.slice(0, 12).map((task) => (
                   <div
                     key={task.id}
-                    className={`p-4 rounded-xl border ${
-                      task.status === "Done"
+                    className={`p-4 rounded-xl border ${task.status === "Done"
                         ? "bg-green-50 border-green-200"
                         : "bg-white border-gray-200"
-                    }`}
+                      }`}
                   >
                     <div className="flex justify-between items-start gap-3">
                       <div className="flex-1">
@@ -141,11 +142,10 @@ const AnniversaryPage = () => {
                       <div className="flex flex-col items-end gap-2">
                         <button
                           onClick={() => toggleStatus(task)}
-                          className={`px-3 py-1 rounded-md text-sm font-medium ${
-                            task.status === "Done"
+                          className={`px-3 py-1 rounded-md text-sm font-medium ${task.status === "Done"
                               ? "bg-green-500 text-white"
                               : "bg-pink-500 text-white"
-                          }`}
+                            }`}
                         >
                           {task.status === "Done" ? "เสร็จแล้ว" : "ทำเสร็จ"}
                         </button>

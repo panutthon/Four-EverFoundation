@@ -5,6 +5,10 @@ import { ChevronUpDownIcon, CheckIcon } from "@heroicons/react/20/solid";
 import type { Task, Subject } from "../types/app";
 import { getTasks } from "../services/tasks";
 import { getSubjects } from "../services/subjects";
+import Swal from "sweetalert2";
+
+import { updateTask } from "../services/tasks";
+import { sendDiscordNotification, DISCORD_COLORS } from "../services/discord";
 
 interface DashboardStats {
   total: number;
@@ -103,9 +107,52 @@ const DashboardPage = () => {
     setStats(newStats);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    navigate("/");
+  const toggleStatus = async (task: Task) => {
+    const newStatus: "Pending" | "Done" = task.status === "Pending" ? "Done" : "Pending";
+
+    const updatedTasks = tasks.map((t) =>
+      t.id === task.id ? { ...t, status: newStatus } : t
+    );
+    setTasks(updatedTasks as Task[]);
+    calculateStats(updatedTasks);
+
+    try {
+      await updateTask(task.id, { status: newStatus });
+
+      if (newStatus === "Done") {
+        await sendDiscordNotification(
+          "✅ งานเสร็จแล้วว!",
+          "ดีใจด้วยที่รัก! เก่งมากค่ะ คนเก่งของเค้า 🎉",
+          DISCORD_COLORS.SUCCESS,
+          [
+            { name: "📌 ชื่องาน", value: `\`\`\`${task.title}\`\`\``, inline: false },
+            { name: "📚 วิชา", value: `\`\`\`${task.subject}\`\`\``, inline: false }
+          ]
+        );
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      loadData(); // Revert on error
+    }
+  };
+
+  const handleLogout = async () => {
+    const result = await Swal.fire({
+      title: "จะไปแล้วหรอ?",
+      text: "ออกจากระบบแล้วจะคิดถึงนะ!",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "ไปก็ได้",
+      cancelButtonText: "อยู่ต่อ",
+      reverseButtons: true,
+      confirmButtonColor: "#EF4444",
+      cancelButtonColor: "#6B7280",
+    });
+
+    if (result.isConfirmed) {
+      localStorage.removeItem("isAuthenticated");
+      navigate("/");
+    }
   };
 
   const getTasksByCategory = () => {
@@ -547,6 +594,17 @@ const DashboardPage = () => {
                     >
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => toggleStatus(task)}
+                            className={`flex-shrink-0 w-8 h-8 rounded-lg border-2 flex items-center justify-center transition-all duration-200 ${task.status === "Done"
+                              ? "bg-green-500 border-green-500 text-white"
+                              : "bg-white border-gray-300 hover:border-purple-500"
+                              }`}
+                          >
+                            {task.status === "Done" && (
+                              <CheckIcon className="h-6 w-6" strokeWidth={3} />
+                            )}
+                          </button>
                           <span className="text-3xl">
                             {task.type === "Homework" ? "📝" : task.type === "Plan" ? "📅" : "👥"}
                           </span>
@@ -562,9 +620,6 @@ const DashboardPage = () => {
                                 : "✅ ต่ำ"}
                           </span>
                         </div>
-                        {task.status === "Done" && (
-                          <span className="text-2xl">✅</span>
-                        )}
                       </div>
 
                       <h4 className="font-bold text-gray-800 text-lg mb-2 line-clamp-2">
@@ -610,6 +665,19 @@ const DashboardPage = () => {
                             <span className="text-gray-600 text-xs">
                               ใช้เวลาประมาณ {task.estimatedTime}
                             </span>
+                          </div>
+                        )}
+
+                        {task.tags && (typeof task.tags === 'string' ? task.tags.split(',') : Array.isArray(task.tags) ? task.tags : []).filter((t: string) => t.trim()).length > 0 && (
+                          <div className="flex items-center gap-2 flex-wrap mt-1">
+                            <span className="text-gray-500">🏷️</span>
+                            <div className="flex flex-wrap gap-1">
+                              {(typeof task.tags === 'string' ? task.tags.split(',') : task.tags).map((tag: string, index: number) => (
+                                <span key={index} className="bg-teal-100 text-teal-700 text-[10px] px-2 py-0.5 rounded-full font-medium border border-teal-200">
+                                  {tag.trim()}
+                                </span>
+                              ))}
+                            </div>
                           </div>
                         )}
                       </div>
