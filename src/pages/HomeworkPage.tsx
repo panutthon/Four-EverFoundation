@@ -260,6 +260,7 @@ const HomeworkPage = () => {
       showCancelButton: true,
       confirmButtonText: "เพิ่ม",
       cancelButtonText: "ยกเลิก",
+      reverseButtons: true,
       inputValidator: (value) => {
         if (!value) {
           return "กรุณากรอกชื่อวิชา!";
@@ -420,7 +421,7 @@ const HomeworkPage = () => {
   return (
     <div className="min-h-screen bg-purple-50">
       {/* Header */}
-      <div className="bg-white shadow-md border-b-4 border-purple-500">
+      <div className="bg-white shadow-md border-b-4 border-pastel-purple">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="text-center sm:text-left">
@@ -429,12 +430,20 @@ const HomeworkPage = () => {
               </h1>
               <p className="text-sm text-gray-600 mt-1">{randomQuote}</p>
             </div>
-            <button
-              onClick={handleLogout}
-              className="w-full sm:w-auto px-4 py-2 bg-pastel-red hover:bg-pastel-red/80 text-white font-semibold rounded-lg transition"
-            >
-              ออกจากระบบ
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="w-full sm:w-auto px-4 py-2 bg-pastel-blue hover:bg-pastel-blue/80 text-white font-semibold rounded-lg transition"
+              >
+                📊 Dashboard
+              </button>
+              <button
+                onClick={handleLogout}
+                className="w-full sm:w-auto px-4 py-2 bg-pastel-red hover:bg-pastel-red/80 text-white font-semibold rounded-lg transition"
+              >
+                ออกจากระบบ
+              </button>
+            </div>
           </div>
 
           {/* Stats */}
@@ -990,18 +999,7 @@ const HomeworkPage = () => {
                         </div>
 
                         {/* Submit Button */}
-                        <div className="md:col-span-2 flex gap-3">
-                          <button
-                            type="submit"
-                            disabled={loading}
-                            className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold text-lg py-3 px-6 rounded-xl shadow-lg transition transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            {loading
-                              ? "กำลังบันทึก..."
-                              : editingTaskId
-                                ? "💾 บันทึกการแก้ไข"
-                                : "✨ เพิ่มงาน"}
-                          </button>
+                        <div className="md:col-span-2 flex justify-end gap-3">
                           <button
                             type="button"
                             onClick={cancelEdit}
@@ -1009,6 +1007,17 @@ const HomeworkPage = () => {
                             className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold text-lg py-3 px-6 rounded-xl shadow transition transform hover:scale-105 active:scale-95"
                           >
                             ยกเลิก
+                          </button>
+                          <button
+                            type="submit"
+                            disabled={loading}
+                            className="bg-pastel-purple hover:bg-pastel-purple/80 text-white font-bold text-lg py-3 px-6 rounded-xl shadow-lg transition transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {loading
+                              ? "กำลังบันทึก..."
+                              : editingTaskId
+                                ? "💾 บันทึกการแก้ไข"
+                                : "✨ เพิ่มงาน"}
                           </button>
                         </div>
                       </div>
@@ -1049,12 +1058,7 @@ const HomeworkPage = () => {
                 <PlusIcon className="h-5 w-5" />
                 เพิ่มงานใหม่
               </button>
-              <button
-                onClick={() => navigate("/dashboard")}
-                className="w-full sm:w-auto px-5 py-2.5 bg-pastel-blue hover:bg-pastel-blue/80 text-white font-bold rounded-xl transition transform hover:scale-105 active:scale-95 border-2 border-pastel-blue"
-              >
-                📊 Dashboard
-              </button>
+
               <button
                 onClick={() => navigate("/subjects")}
                 className="w-full sm:w-auto px-5 py-2.5 bg-pastel-pink hover:bg-pastel-pink/80 text-white font-bold rounded-xl transition transform hover:scale-105 active:scale-95 border-2 border-pastel-pink"
@@ -1092,7 +1096,7 @@ const HomeworkPage = () => {
                   <div
                     key={task.id}
                     className={`border-2 rounded-xl p-5 transition-all transform hover:scale-[1.01] hover:shadow-lg ${task.status === "Done"
-                      ? "bg-green-50 border-green-300 opacity-75"
+                      ? "bg-pastel-green/10 border-pastel-green opacity-75"
                       : "bg-white border-gray-300"
                       }`}
                   >

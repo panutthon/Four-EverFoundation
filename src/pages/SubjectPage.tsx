@@ -46,6 +46,7 @@ const SubjectPage = () => {
       showCancelButton: true,
       confirmButtonText: "เพิ่ม",
       cancelButtonText: "ยกเลิก",
+      reverseButtons: true,
       inputValidator: (value) => {
         if (!value) {
           return "กรุณากรอกชื่อวิชา!";
@@ -76,6 +77,7 @@ const SubjectPage = () => {
       showCancelButton: true,
       confirmButtonText: "บันทึก",
       cancelButtonText: "ยกเลิก",
+      reverseButtons: true,
       inputValidator: (value) => {
         if (!value) {
           return "กรุณากรอกชื่อวิชา!";
