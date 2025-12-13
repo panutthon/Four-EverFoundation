@@ -454,31 +454,7 @@ const HomeworkPage = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Add Task Button */}
-        <div className="mb-8 flex justify-center">
-          <button
-            type="button"
-            onClick={() => {
-              setEditingTaskId(null);
-              setNewTask({
-                title: "",
-                dueDate: "",
-                type: "Homework",
-                subject: "",
-                priority: "Medium",
-                description: "",
-                estimatedTime: "",
-                tags: "",
-              });
-              setSelectedDate(null);
-              setIsModalOpen(true);
-            }}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-xl py-4 px-6 sm:px-10 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95"
-          >
-            <PlusIcon className="h-8 w-8" />
-            เพิ่มงานใหม่
-          </button>
-        </div>
+
 
         <Transition appear show={isModalOpen} as={Fragment}>
           <Dialog
@@ -1035,7 +1011,29 @@ const HomeworkPage = () => {
             <h3 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
               📋 รายการงาน ({tasks.length})
             </h3>
-            <div className="flex gap-2 w-full sm:w-auto">
+            <div className="flex flex-wrap gap-2 w-full sm:w-auto justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingTaskId(null);
+                  setNewTask({
+                    title: "",
+                    dueDate: "",
+                    type: "Homework",
+                    subject: "",
+                    priority: "Medium",
+                    description: "",
+                    estimatedTime: "",
+                    tags: "",
+                  });
+                  setSelectedDate(null);
+                  setIsModalOpen(true);
+                }}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition transform hover:scale-105 active:scale-95 shadow-md"
+              >
+                <PlusIcon className="h-5 w-5" />
+                เพิ่มงานใหม่
+              </button>
               <button
                 onClick={() => navigate("/dashboard")}
                 className="flex-1 sm:flex-none px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition transform hover:scale-105 text-center"

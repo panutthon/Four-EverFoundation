@@ -125,10 +125,10 @@ const DashboardPage = () => {
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return "สวัสดีตอนเช้า! 🌅";
-    if (hour < 17) return "สวัสดีตอนบ่าย! ☀️";
-    if (hour < 20) return "สวัสดีตอนเย็น! 🌇";
-    return "สวัสดีตอนค่ำ! 🌙";
+    if (hour < 12) return "สวัสดีตอนเช้า! ค่ะที่รัก 🌅";
+    if (hour < 17) return "สวัสดีตอนบ่าย! ค่ะที่รัก ☀️";
+    if (hour < 20) return "สวัสดีตอนเย็น! ค่ะที่รัก 🌇";
+    return "สวัสดีตอนค่ำ! ค่ะที่รัก 🌙";
   };
 
   const getMotivationalQuote = () => {
@@ -349,8 +349,8 @@ const DashboardPage = () => {
                 <button
                   onClick={() => setSelectedFilter("all")}
                   className={`px-4 py-2 rounded-lg font-medium transition ${selectedFilter === "all"
-                      ? "bg-indigo-600 text-white shadow-lg"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    ? "bg-indigo-600 text-white shadow-lg"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                 >
                   ทั้งหมด
@@ -358,8 +358,8 @@ const DashboardPage = () => {
                 <button
                   onClick={() => setSelectedFilter("today")}
                   className={`px-4 py-2 rounded-lg font-medium transition ${selectedFilter === "today"
-                      ? "bg-blue-600 text-white shadow-lg"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    ? "bg-blue-600 text-white shadow-lg"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                 >
                   วันนี้
@@ -367,8 +367,8 @@ const DashboardPage = () => {
                 <button
                   onClick={() => setSelectedFilter("week")}
                   className={`px-4 py-2 rounded-lg font-medium transition ${selectedFilter === "week"
-                      ? "bg-purple-600 text-white shadow-lg"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    ? "bg-purple-600 text-white shadow-lg"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                 >
                   สัปดาห์นี้
@@ -376,8 +376,8 @@ const DashboardPage = () => {
                 <button
                   onClick={() => setSelectedFilter("overdue")}
                   className={`px-4 py-2 rounded-lg font-medium transition ${selectedFilter === "overdue"
-                      ? "bg-red-600 text-white shadow-lg"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    ? "bg-red-600 text-white shadow-lg"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                 >
                   เกินกำหนด
@@ -385,8 +385,8 @@ const DashboardPage = () => {
                 <button
                   onClick={() => setSelectedFilter("high")}
                   className={`px-4 py-2 rounded-lg font-medium transition ${selectedFilter === "high"
-                      ? "bg-orange-600 text-white shadow-lg"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    ? "bg-orange-600 text-white shadow-lg"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                 >
                   ความสำคัญสูง
@@ -457,12 +457,12 @@ const DashboardPage = () => {
                     <div
                       key={task.id}
                       className={`border-2 rounded-xl p-4 transition transform hover:scale-105 hover:shadow-xl ${isOverdue
-                          ? "border-red-300 bg-red-50"
-                          : isToday
-                            ? "border-blue-300 bg-blue-50"
-                            : isUrgent
-                              ? "border-yellow-300 bg-yellow-50"
-                              : "border-gray-200 bg-white"
+                        ? "border-red-300 bg-red-50"
+                        : isToday
+                          ? "border-blue-300 bg-blue-50"
+                          : isUrgent
+                            ? "border-yellow-300 bg-yellow-50"
+                            : "border-gray-200 bg-white"
                         }`}
                     >
                       <div className="flex items-start justify-between mb-3">
@@ -503,12 +503,12 @@ const DashboardPage = () => {
                           <span className="text-gray-500">📅</span>
                           <span
                             className={`font-semibold ${isOverdue
-                                ? "text-red-600"
-                                : isToday
-                                  ? "text-blue-600"
-                                  : isUrgent
-                                    ? "text-yellow-600"
-                                    : "text-gray-600"
+                              ? "text-red-600"
+                              : isToday
+                                ? "text-blue-600"
+                                : isUrgent
+                                  ? "text-yellow-600"
+                                  : "text-gray-600"
                               }`}
                           >
                             {formatDueDate(task.dueDate)}

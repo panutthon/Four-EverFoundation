@@ -26,7 +26,7 @@ const LoginPage = () => {
           <h1 className="text-4xl font-bold text-indigo-600 mb-2">
             📚 Homework Gam
           </h1>
-          <p className="text-gray-500">เข้าสู่ระบบเพื่อจัดการการบ้านแฟน</p>
+          <p className="text-gray-500">เข้าสู่ระบบเพื่อจัดการ การบ้านแฟน</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
@@ -76,12 +76,12 @@ const LoginPage = () => {
             type="submit"
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 transform hover:scale-105 active:scale-95"
           >
-            เข้าสู่ระบบแบร่ๆ
+            เข้าสู่ระบบแก้มออม
           </button>
         </form>
 
         <div className="mt-6 text-center text-sm text-gray-500">
-          <p>💡 ใช้งานระบบจัดการการบ้านออนไลน์</p>
+          <p>ณัฏฐธิรดา & ปณัฐฑรณ์</p>
         </div>
       </div>
     </div>
