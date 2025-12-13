@@ -315,7 +315,7 @@ const DashboardPage = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-          <div className="bg-pastel-blue rounded-xl p-5 shadow-lg hover:shadow-2xl transition transform hover:scale-105 text-white">
+          <div className="bg-pastel-blue rounded-xl p-5 shadow-lg hover:shadow-2xl transition transform hover:scale-105 text-white ">
             <div className="text-3xl mb-2">📚</div>
             <div className="text-3xl font-bold">{stats.total}</div>
             <div className="text-sm opacity-90 mt-1">งานทั้งหมด</div>
@@ -767,7 +767,7 @@ const DashboardPage = () => {
 
         {/* Subject Categories */}
         <div className="mt-8">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-6">
+          <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-6">
             📚 งานแยกตามวิชา
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

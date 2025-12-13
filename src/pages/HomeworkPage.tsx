@@ -472,12 +472,12 @@ const HomeworkPage = () => {
                   leaveFrom="opacity-100 scale-100"
                   leaveTo="opacity-0 scale-95"
                 >
-                  <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-2xl transition-all">
+                  <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 text-left align-middle shadow-2xl transition-all">
                     <form onSubmit={handleAddTask} className="p-6 md:p-8">
                       <div className="flex justify-between items-center mb-6 border-b pb-4">
                         <Dialog.Title
                           as="h3"
-                          className="text-2xl font-bold text-gray-800 flex items-center gap-2"
+                          className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2"
                         >
                           {editingTaskId ? "✏️ แก้ไขงาน" : "✨ เพิ่มงานใหม่"}
                         </Dialog.Title>
@@ -506,12 +506,12 @@ const HomeworkPage = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Title */}
                         <div className="md:col-span-2">
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                             📌 ชื่องาน <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="text"
-                            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition"
+                            className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition placeholder-gray-400 dark:placeholder-gray-500"
                             placeholder="พิมพ์ชื่องานที่ต้องทำ..."
                             value={newTask.title}
                             onChange={(e) =>
@@ -528,7 +528,7 @@ const HomeworkPage = () => {
 
                         {/* Type */}
                         <div>
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                             📂 ประเภท <span className="text-red-500">*</span>
                           </label>
                           <Listbox
@@ -538,8 +538,8 @@ const HomeworkPage = () => {
                             }
                           >
                             <div className="relative">
-                              <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-3 pl-4 pr-10 text-left border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
-                                <span className="block truncate font-medium">
+                              <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white dark:bg-gray-700 py-3 pl-4 pr-10 text-left border-2 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
+                                <span className="block truncate font-medium text-gray-900 dark:text-white">
                                   {newTask.type === "Homework"
                                     ? "📝 การบ้าน"
                                     : newTask.type === "Plan"
@@ -559,7 +559,7 @@ const HomeworkPage = () => {
                                 leaveFrom="opacity-100"
                                 leaveTo="opacity-0"
                               >
-                                <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                   {["Homework", "Plan", "Group Work"].map(
                                     (type) => (
                                       <Listbox.Option
@@ -567,7 +567,7 @@ const HomeworkPage = () => {
                                         className={({ active }) =>
                                           `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active
                                             ? "bg-purple-100 text-purple-900"
-                                            : "text-gray-900"
+                                            : "text-gray-900 dark:text-gray-100"
                                           }`
                                         }
                                         value={type}
@@ -607,7 +607,7 @@ const HomeworkPage = () => {
 
                         {/* Subject */}
                         <div>
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                             📚 วิชา <span className="text-red-500">*</span>
                           </label>
                           <Listbox
@@ -617,8 +617,8 @@ const HomeworkPage = () => {
                             }
                           >
                             <div className="relative">
-                              <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-3 pl-4 pr-10 text-left border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
-                                <span className="block truncate font-medium">
+                              <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white dark:bg-gray-700 py-3 pl-4 pr-10 text-left border-2 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
+                                <span className="block truncate font-medium text-gray-900 dark:text-white">
                                   {newTask.subject || "เลือกวิชา"}
                                 </span>
                                 <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -634,14 +634,14 @@ const HomeworkPage = () => {
                                 leaveFrom="opacity-100"
                                 leaveTo="opacity-0"
                               >
-                                <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none scrollbar-thin scrollbar-thumb-purple-200">
+                                <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none scrollbar-thin scrollbar-thumb-purple-200">
                                   {subjects.map((subject) => (
                                     <Listbox.Option
                                       key={subject.id}
                                       className={({ active }) =>
                                         `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active
                                           ? "bg-purple-100 text-purple-900"
-                                          : "text-gray-900"
+                                          : "text-gray-900 dark:text-gray-100"
                                         }`
                                       }
                                       value={subject.name}
@@ -683,7 +683,7 @@ const HomeworkPage = () => {
 
                         {/* Priority */}
                         <div>
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                             🎯 ระดับความสำคัญ <span className="text-red-500">*</span>
                           </label>
                           <Listbox
@@ -693,8 +693,8 @@ const HomeworkPage = () => {
                             }
                           >
                             <div className="relative">
-                              <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-3 pl-4 pr-10 text-left border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
-                                <span className="block truncate font-medium">
+                              <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white dark:bg-gray-700 py-3 pl-4 pr-10 text-left border-2 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
+                                <span className="block truncate font-medium text-gray-900 dark:text-white">
                                   {newTask.priority === "High"
                                     ? "🔥 สูง - ต้องทำด่วน"
                                     : newTask.priority === "Medium"
@@ -714,7 +714,7 @@ const HomeworkPage = () => {
                                 leaveFrom="opacity-100"
                                 leaveTo="opacity-0"
                               >
-                                <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                   {[
                                     {
                                       id: "High",
@@ -743,7 +743,7 @@ const HomeworkPage = () => {
                                       className={({ active }) =>
                                         `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active
                                           ? p.b + " " + p.c
-                                          : "text-gray-900"
+                                          : "text-gray-900 dark:text-gray-100"
                                         }`
                                       }
                                       value={p.id}
@@ -780,7 +780,7 @@ const HomeworkPage = () => {
 
                         {/* Due Date */}
                         <div>
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                             📅 วันครบกำหนด
                           </label>
                           <div className="relative">
@@ -807,7 +807,7 @@ const HomeworkPage = () => {
                               placeholderText="ไม่ระบุ/เลือกวันที่"
                               minDate={new Date()}
                               isClearable
-                              className="w-full px-4 py-3 pl-12 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition"
+                              className="w-full px-4 py-3 pl-12 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition"
                               calendarClassName="shadow-2xl"
                             />
                             <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-6 w-6 text-gray-400 pointer-events-none" />
@@ -821,7 +821,7 @@ const HomeworkPage = () => {
 
                         {/* Estimated Time */}
                         <div>
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                             ⏱️ เวลาที่ใช้ (ประมาณ)
                           </label>
                           <Listbox
@@ -831,8 +831,8 @@ const HomeworkPage = () => {
                             }
                           >
                             <div className="relative">
-                              <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-3 pl-4 pr-10 text-left border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
-                                <span className="block truncate font-medium">
+                              <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white dark:bg-gray-700 py-3 pl-4 pr-10 text-left border-2 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
+                                <span className="block truncate font-medium text-gray-900 dark:text-white">
                                   {newTask.estimatedTime || "ไม่ระบุ"}
                                 </span>
                                 <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -848,13 +848,13 @@ const HomeworkPage = () => {
                                 leaveFrom="opacity-100"
                                 leaveTo="opacity-0"
                               >
-                                <Listbox.Options className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                <Listbox.Options className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                   <Listbox.Option
                                     value=""
                                     className={({ active }) =>
                                       `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active
                                         ? "bg-purple-100 text-purple-900"
-                                        : "text-gray-900"
+                                        : "text-gray-900 dark:text-gray-100"
                                       }`
                                     }
                                   >
@@ -892,7 +892,7 @@ const HomeworkPage = () => {
                                       className={({ active }) =>
                                         `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active
                                           ? "bg-purple-100 text-purple-900"
-                                          : "text-gray-900"
+                                          : "text-gray-900 dark:text-gray-100"
                                         }`
                                       }
                                     >
@@ -926,12 +926,12 @@ const HomeworkPage = () => {
 
                         {/* Tags */}
                         <div className="md:col-span-2">
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                             🏷️ แท็ก (คั่นด้วยจุลภาค)
                           </label>
                           <input
                             type="text"
-                            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition"
+                            className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition placeholder-gray-400 dark:placeholder-gray-500"
                             placeholder="เช่น สอบเก็บคะแนน, งานกลุ่ม, สำคัญมาก"
                             value={newTask.tags}
                             onChange={(e) =>
@@ -942,11 +942,11 @@ const HomeworkPage = () => {
 
                         {/* Description */}
                         <div className="md:col-span-2">
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                             📋 รายละเอียดเพิ่มเติม
                           </label>
                           <textarea
-                            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition resize-none"
+                            className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition resize-none placeholder-gray-400 dark:placeholder-gray-500"
                             placeholder="เขียนรายละเอียดเพิ่มเติม..."
                             rows={3}
                             value={newTask.description}
@@ -965,7 +965,7 @@ const HomeworkPage = () => {
                             type="button"
                             onClick={cancelEdit}
                             disabled={loading}
-                            className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold text-lg py-3 px-6 rounded-xl shadow transition transform hover:scale-105 active:scale-95"
+                            className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-bold text-lg py-3 px-6 rounded-xl shadow transition transform hover:scale-105 active:scale-95"
                           >
                             ยกเลิก
                           </button>
@@ -1072,7 +1072,7 @@ const HomeworkPage = () => {
                         <div className="flex-1 min-w-0">
                           <h4
                             className={`text-lg font-bold mb-2 break-words ${task.status === "Done"
-                              ? "line-through text-gray-500"
+                              ? "line-through text-gray-500 dark:text-gray-400"
                               : "text-gray-800 dark:text-gray-100"
                               }`}
                           >
@@ -1132,10 +1132,10 @@ const HomeworkPage = () => {
 
                           <div className="text-sm text-gray-600 space-y-1">
                             <div className="flex items-center gap-2">
-                              <span className="font-semibold whitespace-nowrap">
+                              <span className="font-semibold whitespace-nowrap dark:text-gray-400">
                                 📅 ครบกำหนด:
                               </span>
-                              <span>
+                              <span className="dark:text-gray-400">
                                 {task.dueDate
                                   ? new Date(task.dueDate).toLocaleDateString(
                                     "th-TH",
@@ -1151,10 +1151,10 @@ const HomeworkPage = () => {
 
                             {task.description && (
                               <div className="flex items-start gap-2">
-                                <span className="font-semibold whitespace-nowrap">
+                                <span className="font-semibold whitespace-nowrap dark:text-gray-400">
                                   📝 รายละเอียด:
                                 </span>
-                                <span className="text-gray-700 break-words">
+                                <span className="text-gray-700 dark:text-gray-400 break-words">
                                   {task.description}
                                 </span>
                               </div>

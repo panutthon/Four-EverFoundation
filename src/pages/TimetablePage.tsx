@@ -1,9 +1,11 @@
 import { useState, useEffect, Fragment } from "react";
-import { Transition, Dialog } from "@headlessui/react";
+import { Transition, Dialog, Listbox } from "@headlessui/react";
 import {
     PlusIcon,
     PencilSquareIcon,
     TrashIcon,
+    ChevronUpDownIcon,
+    CheckIcon,
 } from "@heroicons/react/24/outline";
 import Swal from "sweetalert2";
 import type { ClassSchedule, Subject } from "../types/app";
@@ -295,19 +297,68 @@ const TimetablePage = () => {
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                 วัน
                                             </label>
-                                            <select
+                                            <Listbox
                                                 value={form.day}
-                                                onChange={(e) =>
-                                                    setForm({ ...form, day: e.target.value as any })
+                                                onChange={(value) =>
+                                                    setForm({ ...form, day: value as any })
                                                 }
-                                                className="w-full px-4 py-2 rounded-lg border dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-pastel-purple"
                                             >
-                                                {DAYS.map((day) => (
-                                                    <option key={day} value={day}>
-                                                        {DAY_MAP[day]}
-                                                    </option>
-                                                ))}
-                                            </select>
+                                                <div className="relative">
+                                                    <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white dark:bg-gray-700 py-2 pl-4 pr-10 text-left border dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-pastel-purple transition">
+                                                        <span className="block truncate font-medium text-gray-900 dark:text-white">
+                                                            {DAY_MAP[form.day]}
+                                                        </span>
+                                                        <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                            <ChevronUpDownIcon
+                                                                className="h-5 w-5 text-gray-400"
+                                                                aria-hidden="true"
+                                                            />
+                                                        </span>
+                                                    </Listbox.Button>
+                                                    <Transition
+                                                        as={Fragment}
+                                                        leave="transition ease-in duration-100"
+                                                        leaveFrom="opacity-100"
+                                                        leaveTo="opacity-0"
+                                                    >
+                                                        <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                                            {DAYS.map((day) => (
+                                                                <Listbox.Option
+                                                                    key={day}
+                                                                    className={({ active }) =>
+                                                                        `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active
+                                                                            ? "bg-purple-100 text-purple-900"
+                                                                            : "text-gray-900 dark:text-gray-100"
+                                                                        }`
+                                                                    }
+                                                                    value={day}
+                                                                >
+                                                                    {({ selected }) => (
+                                                                        <>
+                                                                            <span
+                                                                                className={`block truncate ${selected
+                                                                                    ? "font-bold"
+                                                                                    : "font-normal"
+                                                                                    }`}
+                                                                            >
+                                                                                {DAY_MAP[day]}
+                                                                            </span>
+                                                                            {selected ? (
+                                                                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-600">
+                                                                                    <CheckIcon
+                                                                                        className="h-5 w-5"
+                                                                                        aria-hidden="true"
+                                                                                    />
+                                                                                </span>
+                                                                            ) : null}
+                                                                        </>
+                                                                    )}
+                                                                </Listbox.Option>
+                                                            ))}
+                                                        </Listbox.Options>
+                                                    </Transition>
+                                                </div>
+                                            </Listbox>
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-4">
@@ -345,22 +396,68 @@ const TimetablePage = () => {
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                 วิชา
                                             </label>
-                                            <input
-                                                list="subjects"
-                                                type="text"
+                                            <Listbox
                                                 value={form.subject}
-                                                onChange={(e) =>
-                                                    setForm({ ...form, subject: e.target.value })
+                                                onChange={(value) =>
+                                                    setForm({ ...form, subject: value })
                                                 }
-                                                placeholder="เลือกหรือพิมพ์ชื่อวิชา"
-                                                required
-                                                className="w-full px-4 py-2 rounded-lg border dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-pastel-purple"
-                                            />
-                                            <datalist id="subjects">
-                                                {subjects.map((s) => (
-                                                    <option key={s.id} value={s.name} />
-                                                ))}
-                                            </datalist>
+                                            >
+                                                <div className="relative">
+                                                    <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white dark:bg-gray-700 py-2 pl-4 pr-10 text-left border dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-pastel-purple transition">
+                                                        <span className="block truncate font-medium text-gray-900 dark:text-white">
+                                                            {form.subject || "เลือกวิชา"}
+                                                        </span>
+                                                        <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                            <ChevronUpDownIcon
+                                                                className="h-5 w-5 text-gray-400"
+                                                                aria-hidden="true"
+                                                            />
+                                                        </span>
+                                                    </Listbox.Button>
+                                                    <Transition
+                                                        as={Fragment}
+                                                        leave="transition ease-in duration-100"
+                                                        leaveFrom="opacity-100"
+                                                        leaveTo="opacity-0"
+                                                    >
+                                                        <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none scrollbar-thin scrollbar-thumb-purple-200">
+                                                            {subjects.map((subject) => (
+                                                                <Listbox.Option
+                                                                    key={subject.id}
+                                                                    className={({ active }) =>
+                                                                        `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active
+                                                                            ? "bg-purple-100 text-purple-900"
+                                                                            : "text-gray-900 dark:text-gray-100"
+                                                                        }`
+                                                                    }
+                                                                    value={subject.name}
+                                                                >
+                                                                    {({ selected }) => (
+                                                                        <>
+                                                                            <span
+                                                                                className={`block truncate ${selected
+                                                                                    ? "font-bold"
+                                                                                    : "font-normal"
+                                                                                    }`}
+                                                                            >
+                                                                                {subject.name}
+                                                                            </span>
+                                                                            {selected ? (
+                                                                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-600">
+                                                                                    <CheckIcon
+                                                                                        className="h-5 w-5"
+                                                                                        aria-hidden="true"
+                                                                                    />
+                                                                                </span>
+                                                                            ) : null}
+                                                                        </>
+                                                                    )}
+                                                                </Listbox.Option>
+                                                            ))}
+                                                        </Listbox.Options>
+                                                    </Transition>
+                                                </div>
+                                            </Listbox>
                                         </div>
 
                                         <div>

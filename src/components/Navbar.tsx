@@ -47,8 +47,8 @@ export const Navbar = ({
                         <h1 className="text-4xl font-bold text-pastel-blue">
                             {title}
                         </h1>
-                        {subtitle && <p className="text-gray-700 mt-1 font-medium">{subtitle}</p>}
-                        {quote && <p className="text-sm text-gray-500 mt-1">{quote}</p>}
+                        {subtitle && <p className="text-gray-700 dark:text-gray-200 mt-1 font-medium">{subtitle}</p>}
+                        {quote && <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">{quote}</p>}
                     </div>
                     <div className="flex gap-3 flex-wrap justify-center">
                         <ThemeToggle />
