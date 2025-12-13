@@ -1,12 +1,16 @@
 import { useState, useEffect, Fragment } from "react";
 import { Transition, Dialog, Listbox } from "@headlessui/react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
     PlusIcon,
     PencilSquareIcon,
     TrashIcon,
     ChevronUpDownIcon,
     CheckIcon,
+    ClockIcon,
 } from "@heroicons/react/24/outline";
+
 import Swal from "sweetalert2";
 import type { ClassSchedule, Subject } from "../types/app";
 import { Navbar } from "../components/Navbar";
@@ -366,29 +370,65 @@ const TimetablePage = () => {
                                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                     เวลาเริ่ม
                                                 </label>
-                                                <input
-                                                    type="time"
-                                                    value={form.startTime}
-                                                    onChange={(e) =>
-                                                        setForm({ ...form, startTime: e.target.value })
-                                                    }
-                                                    required
-                                                    className="w-full px-4 py-2 rounded-lg border dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-pastel-purple"
-                                                />
+                                                <div className="relative">
+                                                    <DatePicker
+                                                        selected={
+                                                            form.startTime
+                                                                ? new Date(`2000-01-01T${form.startTime}:00`)
+                                                                : null
+                                                        }
+                                                        onChange={(date: Date | null) => {
+                                                            if (date) {
+                                                                const hours = String(date.getHours()).padStart(2, "0");
+                                                                const minutes = String(date.getMinutes()).padStart(2, "0");
+                                                                setForm({ ...form, startTime: `${hours}:${minutes}` });
+                                                            } else {
+                                                                setForm({ ...form, startTime: "" });
+                                                            }
+                                                        }}
+                                                        showTimeSelect
+                                                        showTimeSelectOnly
+                                                        timeIntervals={15}
+                                                        timeCaption="เวลา"
+                                                        dateFormat="HH:mm"
+                                                        timeFormat="HH:mm"
+                                                        placeholderText="เริ่มกี่โมงเอ่ย?"
+                                                        className="w-full px-4 py-2 pl-10 rounded-lg border dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-pastel-purple"
+                                                    />
+                                                    <ClockIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+                                                </div>
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                     เวลาสิ้นสุด
                                                 </label>
-                                                <input
-                                                    type="time"
-                                                    value={form.endTime}
-                                                    onChange={(e) =>
-                                                        setForm({ ...form, endTime: e.target.value })
-                                                    }
-                                                    required
-                                                    className="w-full px-4 py-2 rounded-lg border dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-pastel-purple"
-                                                />
+                                                <div className="relative">
+                                                    <DatePicker
+                                                        selected={
+                                                            form.endTime
+                                                                ? new Date(`2000-01-01T${form.endTime}:00`)
+                                                                : null
+                                                        }
+                                                        onChange={(date: Date | null) => {
+                                                            if (date) {
+                                                                const hours = String(date.getHours()).padStart(2, "0");
+                                                                const minutes = String(date.getMinutes()).padStart(2, "0");
+                                                                setForm({ ...form, endTime: `${hours}:${minutes}` });
+                                                            } else {
+                                                                setForm({ ...form, endTime: "" });
+                                                            }
+                                                        }}
+                                                        showTimeSelect
+                                                        showTimeSelectOnly
+                                                        timeIntervals={15}
+                                                        timeCaption="เวลา"
+                                                        dateFormat="HH:mm"
+                                                        timeFormat="HH:mm"
+                                                        placeholderText="เลิกกี่โมง?"
+                                                        className="w-full px-4 py-2 pl-10 rounded-lg border dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-pastel-purple"
+                                                    />
+                                                    <ClockIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+                                                </div>
                                             </div>
                                         </div>
 

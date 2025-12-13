@@ -348,13 +348,13 @@ const DashboardPage = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8 transition-colors duration-300">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
             🔍 ตัวกรอง
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 ช่วงเวลา
               </label>
               <div className="flex flex-wrap gap-2">
@@ -362,7 +362,7 @@ const DashboardPage = () => {
                   onClick={() => setSelectedFilter("all")}
                   className={`px-4 py-2 rounded-lg font-medium transition ${selectedFilter === "all"
                     ? "bg-pastel-blue text-white shadow-lg"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                     }`}
                 >
                   ทั้งหมด
@@ -371,7 +371,7 @@ const DashboardPage = () => {
                   onClick={() => setSelectedFilter("today")}
                   className={`px-4 py-2 rounded-lg font-medium transition ${selectedFilter === "today"
                     ? "bg-pastel-cyan text-white shadow-lg"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                     }`}
                 >
                   วันนี้
@@ -380,7 +380,7 @@ const DashboardPage = () => {
                   onClick={() => setSelectedFilter("week")}
                   className={`px-4 py-2 rounded-lg font-medium transition ${selectedFilter === "week"
                     ? "bg-pastel-purple text-white shadow-lg"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                     }`}
                 >
                   สัปดาห์นี้
@@ -389,7 +389,7 @@ const DashboardPage = () => {
                   onClick={() => setSelectedFilter("overdue")}
                   className={`px-4 py-2 rounded-lg font-medium transition ${selectedFilter === "overdue"
                     ? "bg-pastel-pink text-white shadow-lg"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                     }`}
                 >
                   เกินกำหนด
@@ -398,7 +398,7 @@ const DashboardPage = () => {
                   onClick={() => setSelectedFilter("high")}
                   className={`px-4 py-2 rounded-lg font-medium transition ${selectedFilter === "high"
                     ? "bg-pastel-red text-white shadow-lg"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                     }`}
                 >
                   ความสำคัญสูง
@@ -406,7 +406,7 @@ const DashboardPage = () => {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 วิชา
               </label>
               <Listbox
@@ -414,8 +414,8 @@ const DashboardPage = () => {
                 onChange={setSelectedSubject}
               >
                 <div className="relative">
-                  <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-2.5 pl-4 pr-10 text-left border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pastel-blue focus:border-pastel-blue transition shadow-sm">
-                    <span className="block truncate font-medium text-gray-700">
+                  <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white dark:bg-gray-700 py-2.5 pl-4 pr-10 text-left border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-pastel-blue focus:border-pastel-blue transition shadow-sm">
+                    <span className="block truncate font-medium text-gray-700 dark:text-gray-200">
                       {selectedSubject === "all"
                         ? "ทุกวิชา"
                         : subjects.find((s) => s.name === selectedSubject)?.name ||
@@ -434,13 +434,13 @@ const DashboardPage = () => {
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                   >
-                    <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                    <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                       <Listbox.Option
                         key="all"
                         className={({ active }) =>
                           `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active
                             ? "bg-indigo-100 text-indigo-900"
-                            : "text-gray-900"
+                            : "text-gray-900 dark:text-gray-100"
                           }`
                         }
                         value="all"
@@ -470,7 +470,7 @@ const DashboardPage = () => {
                           className={({ active }) =>
                             `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active
                               ? "bg-pastel-blue/20 text-gray-900"
-                              : "text-gray-900"
+                              : "text-gray-900 dark:text-gray-100"
                             }`
                           }
                           value={subject.name}
@@ -504,8 +504,8 @@ const DashboardPage = () => {
         </div>
 
         {/* Filtered Tasks List */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8 transition-colors duration-300">
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
             📋 รายการงาน ({getFilteredTasks().length})
           </h3>
           {getFilteredTasks().length === 0 ? (
@@ -547,12 +547,12 @@ const DashboardPage = () => {
                     <div
                       key={task.id}
                       className={`border-2 rounded-xl p-4 transition transform hover:scale-105 hover:shadow-xl ${isOverdue
-                        ? "border-pastel-red bg-pastel-red/10"
+                        ? "border-pastel-red bg-pastel-red/10 dark:bg-red-900/20"
                         : isToday
-                          ? "border-pastel-blue bg-pastel-blue/10"
+                          ? "border-pastel-blue bg-pastel-blue/10 dark:bg-blue-900/20"
                           : isUrgent
-                            ? "border-pastel-yellow bg-pastel-yellow/10"
-                            : "border-gray-200 bg-white"
+                            ? "border-pastel-yellow bg-pastel-yellow/10 dark:bg-yellow-900/20"
+                            : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-700"
                         }`}
                     >
                       <div className="flex items-start justify-between mb-3">
@@ -585,14 +585,14 @@ const DashboardPage = () => {
                         </div>
                       </div>
 
-                      <h4 className="font-bold text-gray-800 text-lg mb-2 line-clamp-2">
+                      <h4 className="font-bold text-gray-800 dark:text-white text-lg mb-2 line-clamp-2">
                         {task.title}
                       </h4>
 
                       <div className="space-y-2 text-sm">
                         <div className="flex items-center gap-2">
                           <span className="text-gray-500">📚</span>
-                          <span className="font-medium text-gray-700">
+                          <span className="font-medium text-gray-700 dark:text-gray-300">
                             {task.subject || "ไม่ระบุวิชา"}
                           </span>
                         </div>
@@ -601,12 +601,12 @@ const DashboardPage = () => {
                           <span className="text-gray-500">📅</span>
                           <span
                             className={`font-semibold ${isOverdue
-                              ? "text-red-600"
+                              ? "text-red-600 dark:text-red-500"
                               : isToday
-                                ? "text-blue-600"
+                                ? "text-blue-600 dark:text-blue-500"
                                 : isUrgent
-                                  ? "text-yellow-600"
-                                  : "text-gray-600"
+                                  ? "text-yellow-600 dark:text-yellow-500"
+                                  : "text-gray-600 dark:text-gray-500"
                               }`}
                           >
                             {formatDueDate(task.dueDate)}
@@ -616,7 +616,7 @@ const DashboardPage = () => {
                         {task.description && (
                           <div className="flex items-start gap-2">
                             <span className="text-gray-500">💬</span>
-                            <span className="text-gray-600 text-xs line-clamp-2">
+                            <span className="text-gray-600 dark:text-gray-400 text-xs line-clamp-2">
                               {task.description}
                             </span>
                           </div>
@@ -625,7 +625,7 @@ const DashboardPage = () => {
                         {task.estimatedTime && (
                           <div className="flex items-center gap-2">
                             <span className="text-gray-500">⏱️</span>
-                            <span className="text-gray-600 text-xs">
+                            <span className="text-gray-600 dark:text-gray-400 text-xs">
                               ใช้เวลาประมาณ {task.estimatedTime}
                             </span>
                           </div>
@@ -633,7 +633,7 @@ const DashboardPage = () => {
 
                         {task.tags && (typeof task.tags === 'string' ? task.tags.split(',') : Array.isArray(task.tags) ? task.tags : []).filter((t: string) => t.trim()).length > 0 && (
                           <div className="flex items-center gap-2 flex-wrap mt-1">
-                            <span className="text-gray-500">🏷️</span>
+                            <span className="text-gray-500 dark:text-gray-400">🏷️</span>
                             <div className="flex flex-wrap gap-1">
                               {(typeof task.tags === 'string' ? task.tags.split(',') : task.tags).map((tag: string, index: number) => (
                                 <span key={index} className="bg-teal-100 text-teal-700 text-[10px] px-2 py-0.5 rounded-full font-medium border border-teal-200">
@@ -787,14 +787,14 @@ const DashboardPage = () => {
                 return (
                   <div
                     key={subject}
-                    className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition"
+                    className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition transition-colors duration-300"
                   >
-                    <h4 className="text-lg font-semibold text-gray-800 mb-3">
+                    <h4 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">
                       {subject}
                     </h4>
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">
+                        <span className="text-gray-600 dark:text-gray-400">
                           ทั้งหมด: {subjectTasks.length}
                         </span>
                         <span className="text-green-600">
@@ -807,7 +807,7 @@ const DashboardPage = () => {
                           {Math.round(progress)}%
                         </span>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div
                           className="bg-pastel-green h-2 rounded-full transition-all duration-300"
                           style={{ width: `${progress}%` }}
@@ -823,9 +823,9 @@ const DashboardPage = () => {
 
         {loading && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 flex items-center gap-3">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 flex items-center gap-3">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-              <span className="text-gray-700">กำลังโหลดข้อมูล...</span>
+              <span className="text-gray-700 dark:text-gray-300">กำลังโหลดข้อมูล...</span>
             </div>
           </div>
         )}
