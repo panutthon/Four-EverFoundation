@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 
 import { updateTask } from "../services/tasks";
 import { sendDiscordNotification, DISCORD_COLORS } from "../services/discord";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 interface DashboardStats {
   total: number;
@@ -289,9 +290,9 @@ const DashboardPage = () => {
     .slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-indigo-50">
+    <div className="min-h-screen bg-indigo-50 dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
-      <div className="bg-white shadow-md border-b-4 border-pastel-pink">
+      <div className="bg-white dark:bg-gray-800 shadow-md border-b-4 border-pastel-pink transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-center py-6 gap-4">
             <div>
@@ -310,6 +311,7 @@ const DashboardPage = () => {
               </p>
             </div>
             <div className="flex gap-3">
+              <ThemeToggle />
               <button
                 onClick={() => navigate("/homework")}
                 className="px-6 py-2.5 bg-pastel-blue hover:bg-pastel-blue/80 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105"

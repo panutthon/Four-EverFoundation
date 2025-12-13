@@ -15,6 +15,7 @@ import "./HomeworkPage.css";
 import { getTasks, addTask, deleteTask, updateTask } from "../services/tasks";
 import { getSubjects, addSubject } from "../services/subjects";
 import { sendDiscordNotification, DISCORD_COLORS } from "../services/discord";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 const HomeworkPage = () => {
   const navigate = useNavigate();
@@ -378,13 +379,13 @@ const HomeworkPage = () => {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "High":
-        return "bg-pastel-red/20 text-red-600 border-pastel-red";
+        return "bg-pastel-red/20 text-red-600 dark:text-red-400 border-pastel-red";
       case "Medium":
-        return "bg-pastel-yellow/20 text-yellow-600 border-pastel-yellow";
+        return "bg-pastel-yellow/20 text-yellow-600 dark:text-yellow-400 border-pastel-yellow";
       case "Low":
-        return "bg-pastel-green/20 text-emerald-600 border-pastel-green";
+        return "bg-pastel-green/20 text-emerald-600 dark:text-emerald-400 border-pastel-green";
       default:
-        return "bg-gray-100 text-gray-700 border-gray-200";
+        return "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600";
     }
   };
 
@@ -419,18 +420,19 @@ const HomeworkPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-purple-50">
+    <div className="min-h-screen bg-purple-50 dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
-      <div className="bg-white shadow-md border-b-4 border-pastel-purple">
+      <div className="bg-white dark:bg-gray-800 shadow-md border-b-4 border-pastel-purple transition-colors duration-300">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="text-center sm:text-left">
               <h1 className="text-3xl font-bold text-pastel-pink">
                 📝 จัดการการบ้าน
               </h1>
-              <p className="text-sm text-gray-600 mt-1">{randomQuote}</p>
+              <p className="text-gray-600 dark:text-gray-300 mt-2 text-lg">{randomQuote}</p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <div className="flex gap-3">
+              <ThemeToggle />
               <button
                 onClick={() => navigate("/dashboard")}
                 className="w-full sm:w-auto px-4 py-2 bg-pastel-blue hover:bg-pastel-blue/80 text-white font-semibold rounded-lg transition"
@@ -1030,9 +1032,9 @@ const HomeworkPage = () => {
         </Transition>
 
         {/* Task List */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 transition-colors duration-300">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-            <h3 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+            <h3 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
               📋 รายการงาน ({tasks.length})
             </h3>
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mt-4 sm:mt-0">
@@ -1096,8 +1098,8 @@ const HomeworkPage = () => {
                   <div
                     key={task.id}
                     className={`border-2 rounded-xl p-5 transition-all transform hover:scale-[1.01] hover:shadow-lg ${task.status === "Done"
-                      ? "bg-pastel-green/10 border-pastel-green opacity-75"
-                      : "bg-white border-gray-300"
+                      ? "bg-pastel-green/10 border-pastel-green opacity-75 dark:bg-green-900/20"
+                      : "bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
                       }`}
                   >
                     <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
@@ -1112,7 +1114,7 @@ const HomeworkPage = () => {
                           <h4
                             className={`text-lg font-bold mb-2 break-words ${task.status === "Done"
                               ? "line-through text-gray-500"
-                              : "text-gray-800"
+                              : "text-gray-800 dark:text-gray-100"
                               }`}
                           >
                             {task.title}
@@ -1129,12 +1131,12 @@ const HomeworkPage = () => {
                             </span>
 
                             {task.subject && (
-                              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold border-2 border-blue-300 whitespace-nowrap">
+                              <span className="px-3 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 rounded-full text-xs font-bold border-2 border-blue-300 dark:border-blue-700 whitespace-nowrap">
                                 📚 {task.subject}
                               </span>
                             )}
 
-                            <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold border-2 border-purple-300 whitespace-nowrap">
+                            <span className="px-3 py-1 bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 rounded-full text-xs font-bold border-2 border-purple-300 dark:border-purple-700 whitespace-nowrap">
                               {task.type === "Homework"
                                 ? "📝"
                                 : task.type === "Plan"
