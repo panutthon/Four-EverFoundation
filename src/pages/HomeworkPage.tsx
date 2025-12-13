@@ -31,6 +31,8 @@ const HomeworkPage = () => {
     tags: "",
   });
 
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   const [formErrors, setFormErrors] = useState<{
@@ -56,35 +58,7 @@ const HomeworkPage = () => {
       ]);
       setTasks(tasksData);
 
-      if (subjectsData.length === 0) {
-        // Seed default subjects if empty
-        const defaultSubjects = [
-          "คณิตศาสตร์",
-          "วิทยาศาสตร์",
-          "ภาษาไทย",
-          "ภาษาอังกฤษ",
-          "สังคมศึกษา",
-          "ประวัติศาสตร์",
-          "ฟิสิกส์",
-          "เคมี",
-          "ชีววิทยา",
-          "คอมพิวเตอร์",
-          "ศิลปะ",
-          "ดนตรี",
-          "พละศึกษา",
-          "อื่นๆ",
-        ];
-        // We'll add them one by one or just use them locally for now to avoid spamming write limits if not needed,
-        // but user asked for "Add subject" so we should persist them.
-        // For speed, let's just set them in state and rely on "Add Subject" to save new ones?
-        // No, best to save them so they persist for Dashboard.
-        const seeded = await Promise.all(
-          defaultSubjects.map((name) => addSubject(name))
-        );
-        setSubjects(seeded);
-      } else {
-        setSubjects(subjectsData);
-      }
+      setSubjects(subjectsData);
     } catch (error) {
       console.error("Error fetching data:", error);
       Swal.fire("Error", "Failed to load data.", "error");
@@ -131,8 +105,28 @@ const HomeworkPage = () => {
 
     setLoading(true);
     try {
-      const addedTask = await addTask(taskData);
-      setTasks([...tasks, addedTask]);
+      if (editingTaskId) {
+        await updateTask(editingTaskId, taskData);
+        setTasks(
+          tasks.map((t) => (t.id === editingTaskId ? { ...t, ...taskData } : t))
+        );
+        Swal.fire({
+          icon: "success",
+          title: "แก้ไขงานสำเร็จ",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        const addedTask = await addTask(taskData);
+        setTasks([...tasks, addedTask]);
+        Swal.fire({
+          icon: "success",
+          title: "เพิ่มงานสำเร็จ",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+
       setNewTask({
         title: "",
         dueDate: "",
@@ -144,18 +138,44 @@ const HomeworkPage = () => {
         tags: "",
       });
       setSelectedDate(null);
-      Swal.fire({
-        icon: "success",
-        title: "เพิ่มงานสำเร็จ",
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      setEditingTaskId(null);
     } catch (error) {
-      console.error("Error adding task:", error);
-      Swal.fire("Error", "Failed to add task", "error");
+      console.error("Error saving task:", error);
+      Swal.fire("Error", "Failed to save task", "error");
     } finally {
       setLoading(false);
     }
+  };
+
+  const startEdit = (task: Task) => {
+    setEditingTaskId(task.id);
+    setNewTask({
+      title: task.title,
+      dueDate: task.dueDate,
+      type: task.type,
+      subject: task.subject,
+      priority: task.priority,
+      description: task.description || "",
+      estimatedTime: task.estimatedTime || "",
+      tags: task.tags ? task.tags.join(", ") : "",
+    });
+    setSelectedDate(new Date(task.dueDate));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const cancelEdit = () => {
+    setEditingTaskId(null);
+    setNewTask({
+      title: "",
+      dueDate: "",
+      type: "Homework",
+      subject: "",
+      priority: "Medium",
+      description: "",
+      estimatedTime: "",
+      tags: "",
+    });
+    setSelectedDate(null);
   };
 
   const handleAddSubject = async () => {
@@ -344,7 +364,7 @@ const HomeworkPage = () => {
           className="bg-white rounded-2xl shadow-xl p-6 mb-8 border-t-4 border-purple-500"
         >
           <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-            ✨ เพิ่มงานใหม่
+            {editingTaskId ? "✏️ แก้ไขงาน" : "✨ เพิ่มงานใหม่"}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -843,8 +863,22 @@ const HomeworkPage = () => {
                 disabled={loading}
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold text-lg py-4 px-6 rounded-xl shadow-xl transition transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? "กำลังเพิ่ม..." : "✨ เพิ่มงาน"}
+                {loading
+                  ? "กำลังบันทึก..."
+                  : editingTaskId
+                  ? "💾 บันทึกการแก้ไข"
+                  : "✨ เพิ่มงาน"}
               </button>
+              {editingTaskId && (
+                <button
+                  type="button"
+                  onClick={cancelEdit}
+                  disabled={loading}
+                  className="w-full mt-3 bg-gray-500 hover:bg-gray-600 text-white font-bold text-lg py-2 px-6 rounded-xl shadow transition transform hover:scale-105 active:scale-95"
+                >
+                  ❌ ยกเลิก
+                </button>
+              )}
             </div>
           </div>
         </form>
@@ -860,6 +894,12 @@ const HomeworkPage = () => {
               className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition transform hover:scale-105"
             >
               📊 Dashboard
+            </button>
+            <button
+              onClick={() => navigate("/subjects")}
+              className="ml-2 px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white font-semibold rounded-lg transition transform hover:scale-105"
+            >
+              📚 จัดการวิชา
             </button>
           </div>
 
@@ -981,6 +1021,16 @@ const HomeworkPage = () => {
                       >
                         🗑️ ลบ
                       </button>
+
+                      {task.status !== "Done" && (
+                        <button
+                          onClick={() => startEdit(task)}
+                          className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg transition transform hover:scale-105 active:scale-95"
+                          disabled={loading}
+                        >
+                          ✏️ แก้ไข
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}

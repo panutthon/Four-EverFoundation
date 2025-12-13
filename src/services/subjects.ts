@@ -3,6 +3,9 @@ import {
   collection,
   getDocs,
   addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
   query,
   orderBy,
 } from "firebase/firestore";
@@ -32,6 +35,29 @@ export const addSubject = async (name: string): Promise<Subject> => {
     return { id: docRef.id, name };
   } catch (error) {
     console.error("Error adding subject: ", error);
+    throw error;
+  }
+};
+
+export const updateSubject = async (
+  id: string,
+  updates: Partial<Subject>
+): Promise<void> => {
+  try {
+    const docRef = doc(db, COLLECTION_NAME, id);
+    await updateDoc(docRef, updates);
+  } catch (error) {
+    console.error("Error updating subject: ", error);
+    throw error;
+  }
+};
+
+export const deleteSubject = async (id: string): Promise<void> => {
+  try {
+    const docRef = doc(db, COLLECTION_NAME, id);
+    await deleteDoc(docRef);
+  } catch (error) {
+    console.error("Error deleting subject: ", error);
     throw error;
   }
 };
