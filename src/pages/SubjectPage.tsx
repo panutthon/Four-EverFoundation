@@ -127,13 +127,13 @@ const SubjectPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-purple-50">
+    <div className="min-h-screen bg-pastel-purple/10">
       {/* Header */}
-      <div className="bg-white shadow-md border-b-4 border-purple-500">
+      <div className="bg-white shadow-md border-b-4 border-pastel-purple">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="text-center sm:text-left">
-              <h1 className="text-3xl font-bold text-purple-600">
+              <h1 className="text-3xl font-bold text-pastel-purple">
                 📚 จัดการรายวิชา
               </h1>
               <p className="text-sm text-gray-600 mt-1">
@@ -143,7 +143,7 @@ const SubjectPage = () => {
             <div className="flex gap-2 w-full sm:w-auto justify-center sm:justify-end">
               <button
                 onClick={() => navigate("/homework")}
-                className="w-full sm:w-auto px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition"
+                className="w-full sm:w-auto px-4 py-2 bg-pastel-blue hover:bg-pastel-blue/80 text-white font-semibold rounded-lg transition"
               >
                 กลับหน้าหลัก
               </button>
@@ -161,7 +161,7 @@ const SubjectPage = () => {
             </h2>
             <button
               onClick={handleAddSubject}
-              className="w-full sm:w-auto px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-4 py-2 bg-pastel-purple hover:bg-pastel-purple/80 text-white font-bold rounded-lg transition flex items-center justify-center gap-2"
             >
               <PlusIcon className="h-5 w-5" /> เพิ่มวิชา
             </button>
@@ -169,7 +169,7 @@ const SubjectPage = () => {
 
           {loading && subjects.length === 0 ? (
             <div className="text-center py-12 text-gray-500">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-purple-600 mx-auto mb-4"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-pastel-purple mx-auto mb-4"></div>
               <p>กำลังโหลดข้อมูล...</p>
             </div>
           ) : (
@@ -177,7 +177,7 @@ const SubjectPage = () => {
               {subjects.map((subject) => (
                 <div
                   key={subject.id}
-                  className="bg-purple-50 border-2 border-purple-100 rounded-xl p-4 flex justify-between items-center hover:border-purple-300 transition"
+                  className="bg-pastel-purple/10 border-2 border-pastel-purple/30 rounded-xl p-4 flex justify-between items-center hover:border-pastel-purple transition"
                 >
                   <span className="font-semibold text-lg text-gray-800">
                     {subject.name}
@@ -185,14 +185,14 @@ const SubjectPage = () => {
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleEditSubject(subject)}
-                      className="p-2 bg-yellow-100 text-yellow-600 rounded-lg hover:bg-yellow-200 transition"
+                      className="p-2 bg-pastel-yellow/20 text-yellow-600 rounded-lg hover:bg-pastel-yellow/40 transition"
                       title="แก้ไข"
                     >
                       <PencilIcon className="h-5 w-5" />
                     </button>
                     <button
                       onClick={() => handleDeleteSubject(subject.id)}
-                      className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition"
+                      className="p-2 bg-pastel-red/20 text-pastel-red rounded-lg hover:bg-pastel-red/40 transition"
                       title="ลบ"
                     >
                       <TrashIcon className="h-5 w-5" />

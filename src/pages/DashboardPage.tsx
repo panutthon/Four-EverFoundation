@@ -168,11 +168,11 @@ const DashboardPage = () => {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "High":
-        return "bg-red-100 text-red-700 border-red-200";
+        return "bg-pastel-red/20 text-red-600 border-pastel-red";
       case "Medium":
-        return "bg-yellow-100 text-yellow-700 border-yellow-200";
+        return "bg-pastel-yellow/20 text-yellow-600 border-pastel-yellow";
       case "Low":
-        return "bg-green-100 text-green-700 border-green-200";
+        return "bg-pastel-green/20 text-emerald-600 border-pastel-green";
       default:
         return "bg-gray-100 text-gray-700 border-gray-200";
     }
@@ -291,11 +291,11 @@ const DashboardPage = () => {
   return (
     <div className="min-h-screen bg-indigo-50">
       {/* Header */}
-      <div className="bg-white shadow-md border-b-4 border-indigo-500">
+      <div className="bg-white shadow-md border-b-4 border-pastel-pink">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-center py-6 gap-4">
             <div>
-              <h1 className="text-4xl font-bold text-indigo-600">
+              <h1 className="text-4xl font-bold text-pastel-blue">
                 <Link
                   to="/anniversary"
                   className="inline-flex items-center gap-2 hover:underline cursor-pointer"
@@ -312,13 +312,13 @@ const DashboardPage = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => navigate("/homework")}
-                className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105"
+                className="px-6 py-2.5 bg-pastel-blue hover:bg-pastel-blue/80 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105"
               >
                 📝 จัดการงาน
               </button>
               <button
                 onClick={handleLogout}
-                className="px-6 py-2.5 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105"
+                className="px-6 py-2.5 bg-pastel-red hover:bg-pastel-red/80 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105"
               >
                 ออกจากระบบ
               </button>
@@ -329,7 +329,7 @@ const DashboardPage = () => {
 
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         {/* Quick Stats Overview */}
-        <div className="bg-indigo-600 rounded-2xl shadow-2xl p-6 mb-8 text-white">
+        <div className="bg-pastel-pink rounded-2xl shadow-2xl p-6 mb-8 text-white">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
               <div className="text-4xl font-bold">{stats.completionRate}%</div>
@@ -352,32 +352,32 @@ const DashboardPage = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-          <div className="bg-indigo-500 rounded-xl p-5 shadow-lg hover:shadow-2xl transition transform hover:scale-105 text-white">
+          <div className="bg-pastel-blue rounded-xl p-5 shadow-lg hover:shadow-2xl transition transform hover:scale-105 text-white">
             <div className="text-3xl mb-2">📚</div>
             <div className="text-3xl font-bold">{stats.total}</div>
             <div className="text-sm opacity-90 mt-1">งานทั้งหมด</div>
           </div>
-          <div className="bg-green-500 rounded-xl p-5 shadow-lg hover:shadow-2xl transition transform hover:scale-105 text-white">
+          <div className="bg-pastel-green rounded-xl p-5 shadow-lg hover:shadow-2xl transition transform hover:scale-105 text-white">
             <div className="text-3xl mb-2">✅</div>
             <div className="text-3xl font-bold">{stats.completed}</div>
             <div className="text-sm opacity-90 mt-1">เสร็จแล้ว</div>
           </div>
-          <div className="bg-yellow-500 rounded-xl p-5 shadow-lg hover:shadow-2xl transition transform hover:scale-105 text-white">
+          <div className="bg-pastel-yellow rounded-xl p-5 shadow-lg hover:shadow-2xl transition transform hover:scale-105 text-white">
             <div className="text-3xl mb-2">⏳</div>
             <div className="text-3xl font-bold">{stats.pending}</div>
             <div className="text-sm opacity-90 mt-1">รอดำเนินการ</div>
           </div>
-          <div className="bg-red-500 rounded-xl p-5 shadow-lg hover:shadow-2xl transition transform hover:scale-105 text-white">
+          <div className="bg-pastel-red rounded-xl p-5 shadow-lg hover:shadow-2xl transition transform hover:scale-105 text-white">
             <div className="text-3xl mb-2">🚨</div>
             <div className="text-3xl font-bold">{stats.overdue}</div>
             <div className="text-sm opacity-90 mt-1">เกินกำหนด</div>
           </div>
-          <div className="bg-blue-500 rounded-xl p-5 shadow-lg hover:shadow-2xl transition transform hover:scale-105 text-white">
+          <div className="bg-pastel-cyan rounded-xl p-5 shadow-lg hover:shadow-2xl transition transform hover:scale-105 text-white">
             <div className="text-3xl mb-2">🎯</div>
             <div className="text-3xl font-bold">{stats.dueToday}</div>
             <div className="text-sm opacity-90 mt-1">วันนี้</div>
           </div>
-          <div className="bg-purple-500 rounded-xl p-5 shadow-lg hover:shadow-2xl transition transform hover:scale-105 text-white">
+          <div className="bg-pastel-purple rounded-xl p-5 shadow-lg hover:shadow-2xl transition transform hover:scale-105 text-white">
             <div className="text-3xl mb-2">📅</div>
             <div className="text-3xl font-bold">{stats.dueThisWeek}</div>
             <div className="text-sm opacity-90 mt-1">สัปดาห์นี้</div>
@@ -398,7 +398,7 @@ const DashboardPage = () => {
                 <button
                   onClick={() => setSelectedFilter("all")}
                   className={`px-4 py-2 rounded-lg font-medium transition ${selectedFilter === "all"
-                    ? "bg-indigo-600 text-white shadow-lg"
+                    ? "bg-pastel-blue text-white shadow-lg"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                 >
@@ -407,7 +407,7 @@ const DashboardPage = () => {
                 <button
                   onClick={() => setSelectedFilter("today")}
                   className={`px-4 py-2 rounded-lg font-medium transition ${selectedFilter === "today"
-                    ? "bg-blue-600 text-white shadow-lg"
+                    ? "bg-pastel-cyan text-white shadow-lg"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                 >
@@ -416,7 +416,7 @@ const DashboardPage = () => {
                 <button
                   onClick={() => setSelectedFilter("week")}
                   className={`px-4 py-2 rounded-lg font-medium transition ${selectedFilter === "week"
-                    ? "bg-purple-600 text-white shadow-lg"
+                    ? "bg-pastel-purple text-white shadow-lg"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                 >
@@ -425,7 +425,7 @@ const DashboardPage = () => {
                 <button
                   onClick={() => setSelectedFilter("overdue")}
                   className={`px-4 py-2 rounded-lg font-medium transition ${selectedFilter === "overdue"
-                    ? "bg-red-600 text-white shadow-lg"
+                    ? "bg-pastel-pink text-white shadow-lg"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                 >
@@ -434,7 +434,7 @@ const DashboardPage = () => {
                 <button
                   onClick={() => setSelectedFilter("high")}
                   className={`px-4 py-2 rounded-lg font-medium transition ${selectedFilter === "high"
-                    ? "bg-orange-600 text-white shadow-lg"
+                    ? "bg-pastel-red text-white shadow-lg"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                 >
@@ -451,7 +451,7 @@ const DashboardPage = () => {
                 onChange={setSelectedSubject}
               >
                 <div className="relative">
-                  <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-2.5 pl-4 pr-10 text-left border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm">
+                  <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-2.5 pl-4 pr-10 text-left border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pastel-blue focus:border-pastel-blue transition shadow-sm">
                     <span className="block truncate font-medium text-gray-700">
                       {selectedSubject === "all"
                         ? "ทุกวิชา"
@@ -506,7 +506,7 @@ const DashboardPage = () => {
                           key={subject.id}
                           className={({ active }) =>
                             `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active
-                              ? "bg-indigo-100 text-indigo-900"
+                              ? "bg-pastel-blue/20 text-gray-900"
                               : "text-gray-900"
                             }`
                           }
@@ -521,7 +521,7 @@ const DashboardPage = () => {
                                 {subject.name}
                               </span>
                               {selected ? (
-                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-indigo-600">
+                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-pastel-blue">
                                   <CheckIcon
                                     className="h-5 w-5"
                                     aria-hidden="true"
@@ -584,11 +584,11 @@ const DashboardPage = () => {
                     <div
                       key={task.id}
                       className={`border-2 rounded-xl p-4 transition transform hover:scale-105 hover:shadow-xl ${isOverdue
-                        ? "border-red-300 bg-red-50"
+                        ? "border-pastel-red bg-pastel-red/10"
                         : isToday
-                          ? "border-blue-300 bg-blue-50"
+                          ? "border-pastel-blue bg-pastel-blue/10"
                           : isUrgent
-                            ? "border-yellow-300 bg-yellow-50"
+                            ? "border-pastel-yellow bg-pastel-yellow/10"
                             : "border-gray-200 bg-white"
                         }`}
                     >
@@ -714,7 +714,7 @@ const DashboardPage = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {/* Today's Tasks Summary */}
-          <div className="bg-blue-500 rounded-xl shadow-lg p-6 text-white">
+          <div className="bg-pastel-blue rounded-xl shadow-lg p-6 text-white">
             <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
               🎯 งานวันนี้
             </h3>
@@ -725,10 +725,10 @@ const DashboardPage = () => {
                 {todayTasks.slice(0, 3).map((task) => (
                   <div
                     key={task.id}
-                    className="bg-white bg-opacity-20 rounded-lg p-2 text-sm"
+                    className="bg-white rounded-lg p-2 text-sm shadow-sm"
                   >
-                    <div className="font-medium truncate">{task.title}</div>
-                    <div className="text-xs opacity-80">{task.subject}</div>
+                    <div className="font-medium truncate text-gray-800">{task.title}</div>
+                    <div className="text-xs text-gray-500">{task.subject}</div>
                   </div>
                 ))}
                 {todayTasks.length > 3 && (
@@ -741,7 +741,7 @@ const DashboardPage = () => {
           </div>
 
           {/* Overdue Tasks Summary */}
-          <div className="bg-red-500 rounded-xl shadow-lg p-6 text-white">
+          <div className="bg-pastel-red rounded-xl shadow-lg p-6 text-white">
             <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
               🚨 งานเกินกำหนด
             </h3>
@@ -752,10 +752,10 @@ const DashboardPage = () => {
                 {overdueTasks.slice(0, 3).map((task) => (
                   <div
                     key={task.id}
-                    className="bg-white bg-opacity-20 rounded-lg p-2 text-sm"
+                    className="bg-white rounded-lg p-2 text-sm shadow-sm"
                   >
-                    <div className="font-medium truncate">{task.title}</div>
-                    <div className="text-xs opacity-80">
+                    <div className="font-medium truncate text-gray-800">{task.title}</div>
+                    <div className="text-xs text-gray-500">
                       {task.subject} • เกิน{" "}
                       {Math.abs(getDaysUntilDue(task.dueDate))} วัน
                     </div>
@@ -771,7 +771,7 @@ const DashboardPage = () => {
           </div>
 
           {/* Upcoming Tasks Summary */}
-          <div className="bg-purple-500 rounded-xl shadow-lg p-6 text-white">
+          <div className="bg-pastel-purple rounded-xl shadow-lg p-6 text-white">
             <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
               📅 งานที่จะมาถึง
             </h3>
@@ -784,10 +784,10 @@ const DashboardPage = () => {
                 {upcomingTasks.slice(0, 3).map((task) => (
                   <div
                     key={task.id}
-                    className="bg-white bg-opacity-20 rounded-lg p-2 text-sm"
+                    className="bg-white rounded-lg p-2 text-sm shadow-sm"
                   >
-                    <div className="font-medium truncate">{task.title}</div>
-                    <div className="text-xs opacity-80">
+                    <div className="font-medium truncate text-gray-800">{task.title}</div>
+                    <div className="text-xs text-gray-500">
                       {task.subject} • {formatDueDate(task.dueDate)}
                     </div>
                   </div>
@@ -846,7 +846,7 @@ const DashboardPage = () => {
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
-                          className="bg-green-400 h-2 rounded-full transition-all duration-300"
+                          className="bg-pastel-green h-2 rounded-full transition-all duration-300"
                           style={{ width: `${progress}%` }}
                         ></div>
                       </div>

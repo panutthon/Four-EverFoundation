@@ -62,7 +62,7 @@ const AnniversaryPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-pink-50 flex flex-col items-center py-12">
+    <div className="min-h-screen bg-pastel-pink/10 flex flex-col items-center py-12">
       <div className="max-w-3xl w-full px-6">
         <div className="bg-white rounded-3xl p-8 shadow-lg text-center">
           <div className="flex flex-col items-center">
@@ -81,7 +81,7 @@ const AnniversaryPage = () => {
               }}
               className="w-40 h-40 object-cover rounded-full shadow-md mb-4"
             />
-            <h1 className="text-3xl font-bold text-pink-600 mt-1">
+            <h1 className="text-3xl font-bold text-pastel-pink mt-1">
               สุขสันต์ครบรอบ 4 เดือน
             </h1>
           </div>
@@ -89,14 +89,14 @@ const AnniversaryPage = () => {
             ของขวัญ: Four-EverFoundation - To-Do List
           </p>
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
-            <div className="bg-pink-100/60 rounded-xl p-4">
-              <h3 className="font-semibold text-pink-700">คำอวยพร</h3>
+            <div className="bg-pastel-pink/20 rounded-xl p-4">
+              <h3 className="font-semibold text-pink-500">คำอวยพร</h3>
               <p className="mt-2 text-sm text-gray-700">
                 วันนี้ครบ 4 เดือนของเรา ขอบคุณที่อยู่ข้างๆ กัน 💕
               </p>
             </div>
-            <div className="bg-pink-100/60 rounded-xl p-4">
-              <h3 className="font-semibold text-pink-700">เล็ก ๆ น้อย ๆ</h3>
+            <div className="bg-pastel-pink/20 rounded-xl p-4">
+              <h3 className="font-semibold text-pink-500">เล็ก ๆ น้อย ๆ</h3>
               <p className="mt-2 text-sm text-gray-700">
                 กดเครื่องหมายเสร็จเมื่องานเรียบร้อยด้วยนะที่รัก
               </p>
@@ -120,8 +120,8 @@ const AnniversaryPage = () => {
                   <div
                     key={task.id}
                     className={`p-4 rounded-xl border ${task.status === "Done"
-                        ? "bg-green-50 border-green-200"
-                        : "bg-white border-gray-200"
+                      ? "bg-pastel-green/20 border-pastel-green"
+                      : "bg-white border-gray-200"
                       }`}
                   >
                     <div className="flex justify-between items-start gap-3">
@@ -143,8 +143,8 @@ const AnniversaryPage = () => {
                         <button
                           onClick={() => toggleStatus(task)}
                           className={`px-3 py-1 rounded-md text-sm font-medium ${task.status === "Done"
-                              ? "bg-green-500 text-white"
-                              : "bg-pink-500 text-white"
+                            ? "bg-pastel-green text-white"
+                            : "bg-pastel-pink text-white"
                             }`}
                         >
                           {task.status === "Done" ? "เสร็จแล้ว" : "ทำเสร็จ"}
@@ -163,13 +163,13 @@ const AnniversaryPage = () => {
           <div className="mt-8 flex justify-center gap-4">
             <button
               onClick={() => navigate(-1)}
-              className="px-5 py-2 rounded-full bg-pink-600 text-white font-semibold"
+              className="px-5 py-2 rounded-full bg-pastel-pink hover:bg-pastel-pink/80 text-white font-semibold shadow-md transition"
             >
               กลับ
             </button>
             <button
               onClick={() => window.print()}
-              className="px-5 py-2 rounded-full bg-white border border-pink-600 text-pink-600 font-semibold"
+              className="px-5 py-2 rounded-full bg-white border-2 border-pastel-pink text-pastel-pink font-semibold shadow-md transition hover:bg-pastel-pink/10"
             >
               พิมพ์หน้าเป็นของขวัญ
             </button>

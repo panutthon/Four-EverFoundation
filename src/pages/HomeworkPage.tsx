@@ -377,13 +377,13 @@ const HomeworkPage = () => {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "High":
-        return "bg-red-100 text-red-700 border-red-300";
+        return "bg-pastel-red/20 text-red-600 border-pastel-red";
       case "Medium":
-        return "bg-yellow-100 text-yellow-700 border-yellow-300";
+        return "bg-pastel-yellow/20 text-yellow-600 border-pastel-yellow";
       case "Low":
-        return "bg-green-100 text-green-700 border-green-300";
+        return "bg-pastel-green/20 text-emerald-600 border-pastel-green";
       default:
-        return "bg-gray-100 text-gray-700 border-gray-300";
+        return "bg-gray-100 text-gray-700 border-gray-200";
     }
   };
 
@@ -424,14 +424,14 @@ const HomeworkPage = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="text-center sm:text-left">
-              <h1 className="text-3xl font-bold text-purple-600">
+              <h1 className="text-3xl font-bold text-pastel-pink">
                 📝 จัดการการบ้าน
               </h1>
               <p className="text-sm text-gray-600 mt-1">{randomQuote}</p>
             </div>
             <button
               onClick={handleLogout}
-              className="w-full sm:w-auto px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition"
+              className="w-full sm:w-auto px-4 py-2 bg-pastel-red hover:bg-pastel-red/80 text-white font-semibold rounded-lg transition"
             >
               ออกจากระบบ
             </button>
@@ -439,27 +439,27 @@ const HomeworkPage = () => {
 
           {/* Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-            <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 text-center">
-              <div className="text-3xl font-bold text-blue-600">
+            <div className="bg-pastel-blue/10 border-2 border-pastel-blue rounded-lg p-4 text-center">
+              <div className="text-3xl font-bold text-pastel-blue">
                 {stats.total}
               </div>
-              <div className="text-sm text-blue-700 font-medium mt-1">
+              <div className="text-sm text-pastel-blue font-medium mt-1">
                 งานทั้งหมด
               </div>
             </div>
-            <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4 text-center">
-              <div className="text-3xl font-bold text-yellow-600">
+            <div className="bg-pastel-yellow/10 border-2 border-pastel-yellow rounded-lg p-4 text-center">
+              <div className="text-3xl font-bold text-pastel-yellow">
                 {stats.pending}
               </div>
-              <div className="text-sm text-yellow-700 font-medium mt-1">
+              <div className="text-sm text-pastel-yellow font-medium mt-1">
                 รอดำเนินการ
               </div>
             </div>
-            <div className="bg-green-50 border-2 border-green-300 rounded-lg p-4 text-center">
-              <div className="text-3xl font-bold text-green-600">
+            <div className="bg-pastel-green/10 border-2 border-pastel-green rounded-lg p-4 text-center">
+              <div className="text-3xl font-bold text-pastel-green">
                 {stats.done}
               </div>
-              <div className="text-sm text-green-700 font-medium mt-1">
+              <div className="text-sm text-pastel-green font-medium mt-1">
                 เสร็จสิ้น
               </div>
             </div>
@@ -1044,20 +1044,20 @@ const HomeworkPage = () => {
                   setSelectedDate(null);
                   setIsModalOpen(true);
                 }}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg transition transform hover:scale-105 active:scale-95"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-pastel-purple hover:bg-pastel-purple/80 text-white font-bold rounded-xl shadow-lg transition transform hover:scale-105 active:scale-95"
               >
                 <PlusIcon className="h-5 w-5" />
                 เพิ่มงานใหม่
               </button>
               <button
                 onClick={() => navigate("/dashboard")}
-                className="w-full sm:w-auto px-5 py-2.5 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-bold rounded-xl transition transform hover:scale-105 active:scale-95 border-2 border-indigo-200"
+                className="w-full sm:w-auto px-5 py-2.5 bg-pastel-blue hover:bg-pastel-blue/80 text-white font-bold rounded-xl transition transform hover:scale-105 active:scale-95 border-2 border-pastel-blue"
               >
                 📊 Dashboard
               </button>
               <button
                 onClick={() => navigate("/subjects")}
-                className="w-full sm:w-auto px-5 py-2.5 bg-pink-100 hover:bg-pink-200 text-pink-700 font-bold rounded-xl transition transform hover:scale-105 active:scale-95 border-2 border-pink-200"
+                className="w-full sm:w-auto px-5 py-2.5 bg-pastel-pink hover:bg-pastel-pink/80 text-white font-bold rounded-xl transition transform hover:scale-105 active:scale-95 border-2 border-pastel-pink"
               >
                 📚 จัดการวิชา
               </button>
@@ -1201,7 +1201,7 @@ const HomeworkPage = () => {
                       <div className="flex gap-2 w-full sm:w-auto justify-end mt-2 sm:mt-0">
                         <button
                           onClick={() => handleDelete(task.id)}
-                          className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition transform hover:scale-105 active:scale-95 flex-1 sm:flex-none"
+                          className="px-4 py-2 bg-pastel-red hover:bg-pastel-red/80 text-white font-semibold rounded-lg transition transform hover:scale-105 active:scale-95 flex-1 sm:flex-none"
                           disabled={loading}
                         >
                           🗑️ ลบ
@@ -1210,7 +1210,7 @@ const HomeworkPage = () => {
                         {task.status !== "Done" && (
                           <button
                             onClick={() => startEdit(task)}
-                            className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg transition transform hover:scale-105 active:scale-95 flex-1 sm:flex-none"
+                            className="px-4 py-2 bg-pastel-yellow hover:bg-pastel-yellow/80 text-white font-semibold rounded-lg transition transform hover:scale-105 active:scale-95 flex-1 sm:flex-none"
                             disabled={loading}
                           >
                             ✏️ แก้ไข
