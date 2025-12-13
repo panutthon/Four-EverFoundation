@@ -12,9 +12,16 @@
   --color-pastel-purple: #ddb8fe;
 }
 
+@font-face {
+  font-family: "WendyGin";
+  src: url("./assets/fonts/GMCWendyGinDemo.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 @layer base {
   * {
-    font-family: "Kanit", "Inter", system-ui, -apple-system, sans-serif;
+    font-family: "WendyGin", "Kanit", "Inter", system-ui, -apple-system, sans-serif;
   }
 
   .font-english {
